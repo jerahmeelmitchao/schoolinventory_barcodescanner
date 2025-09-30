@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="inventorysystem.controllers.DashboardController"
+            prefWidth="1100" prefHeight="650" styleClass="mainFxmlClass">
+
+    <!-- Sidebar -->
+    <left>
+        <VBox spacing="10" style="-fx-background-color: #2c3e50; -fx-padding: 15;">
+            <Label text="Inventory Dashboard" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;" />
+            <Button text="Dashboard" fx:id="dashboardBtn" styleClass="sidebar-btn"/>
+            <Button text="Items" fx:id="itemsBtn" styleClass="sidebar-btn"/>
+            <Button text="Categories" fx:id="categoriesBtn" styleClass="sidebar-btn"/>
+            <Button text="Borrowers" fx:id="borrowersBtn" styleClass="sidebar-btn"/>
+            <Button text="Incharges" fx:id="inchargesBtn" styleClass="sidebar-btn"/>
+        </VBox>
+    </left>
+
+    <!-- Main Content -->
+    <center>
+        <StackPane fx:id="mainContent" style="-fx-background-color: #f8f9fa; -fx-padding: 20;">
+            <!-- Default dashboard content -->
+            <VBox alignment="CENTER" spacing="20">
+                <Label text="Welcome to the Inventory Dashboard" styleClass="title-label"/>
+                <Label text="Select a module from the sidebar to get started." />
+            </VBox>
+        </StackPane>
+    </center>
+</BorderPane>
