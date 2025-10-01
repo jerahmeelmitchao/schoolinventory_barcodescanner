@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 30, 2025 at 02:52 PM
+-- Generation Time: Oct 01, 2025 at 03:21 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -149,6 +149,26 @@ CREATE TABLE `items` (
 INSERT INTO `items` (`item_id`, `item_name`, `barcode`, `category_id`, `quantity`, `unit`, `date_acquired`, `serviceability_status`, `availability_status`, `incharge_id`) VALUES
 (2, 'Ball', '123243242', 3, 22, 'pcs', '2025-09-13', 'Serviceable', 'Available', 1);
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `username`, `password`, `created_at`) VALUES
+(1, 'jareth', '123', '2025-10-01 13:01:49');
+
 --
 -- Indexes for dumped tables
 --
@@ -198,6 +218,13 @@ ALTER TABLE `items`
   ADD KEY `idx_items_barcode` (`barcode`);
 
 --
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -236,6 +263,12 @@ ALTER TABLE `incharge`
 --
 ALTER TABLE `items`
   MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
