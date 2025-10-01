@@ -2,32 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/models/Incharge.java</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/dao/BorrowerDAO.java</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/models/Category.java</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/dao/BorrowRecordDAO.java</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/controllers/InChargeController.java</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/models/Borrower.java</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/dao/CategoryDAO.java</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/views/dashboard.fxml</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/views/items.fxml</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/views/category.fxml</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/models/BorrowRecord.java</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/dao/InchargeDAO.java</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/controllers/DashboardController.java</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/utils/BarcodeGenerator.java</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/controllers/BarcodeTableCell.java</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/utils/DatabaseConnection.java</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/controllers/ItemController.java</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/views/BorrowerManagement.fxml</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/assets/styles.css</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/controllers/BorrowerController.java</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/models/Item.java</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/controllers/CategoryController.java</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/views/InCharge.fxml</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/dao/ItemDAO.java</file>
-            <file>file:/C:/Projects/InventorySystem/src/inventorysystem/Main.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>
