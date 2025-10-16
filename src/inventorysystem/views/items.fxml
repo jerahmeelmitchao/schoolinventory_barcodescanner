@@ -16,14 +16,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="inventorysystem.controllers.ItemController">
+<AnchorPane id="AnchorPane" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="inventorysystem.controllers.ItemController">
 
     <stylesheets>
         <URL value="@/inventorysystem/assets/styles.css" />
     </stylesheets>
 
     <children>
-        <VBox layoutY="2.0" prefHeight="700.0" prefWidth="1100.0" spacing="15.0">
+        <VBox layoutY="2.0" prefHeight="679.0" prefWidth="888.0" spacing="15.0">
             <padding>
                 <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
             </padding>
@@ -83,7 +83,7 @@
                 </HBox>
 
                 <!-- Table -->
-                <TableView fx:id="itemTable" prefHeight="339.0" prefWidth="973.0">
+                <TableView fx:id="itemTable" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="316.0" prefWidth="834.0">
                     <columns>
                         <TableColumn fx:id="colItemName" prefWidth="150.0" text="Item Name" />
                         <TableColumn fx:id="colBarcode" prefWidth="150.0" text="Barcode" />
