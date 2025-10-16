@@ -33,7 +33,7 @@ public class DashboardController {
     public void initialize() {
         // Map buttons to FXML files (ensure these files exist in views/)
         buttonFxmlMap = new HashMap<>();
-        buttonFxmlMap.put(dashboardBtn, "items.fxml"); // dashboard main content
+        buttonFxmlMap.put(dashboardBtn, "dashboard.fxml"); // dashboard main content
         buttonFxmlMap.put(itemsBtn, "items.fxml");
         buttonFxmlMap.put(categoriesBtn, "category.fxml");
         buttonFxmlMap.put(borrowersBtn, "BorrowerManagement.fxml");
