@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" styleClass="mainFxmlClass" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/25" fx:controller="inventorysystem.controllers.Dashboard2Controller">
+    <stylesheets>
+        <URL value="@/inventorysystem/assets/styles.css" />
+    </stylesheets>
+   <children>
+      <Text layoutX="371.0" layoutY="219.0" strokeType="OUTSIDE" strokeWidth="0.0" text="yawa" />
+   </children>
+</AnchorPane>
