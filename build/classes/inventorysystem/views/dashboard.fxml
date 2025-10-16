@@ -1,22 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="inventorysystem.controllers.DashboardController"
-            prefWidth="1100" prefHeight="650" styleClass="mainFxmlClass">
+<BorderPane prefHeight="650" prefWidth="1100" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="inventorysystem.controllers.DashboardController">
 
     <!-- Sidebar -->
     <left>
-        <VBox spacing="10" style="-fx-background-color: #2c3e50; -fx-padding: 15;">
-            <Label text="Inventory Dashboard" style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;" />
-            <Button text="Dashboard" fx:id="dashboardBtn" styleClass="sidebar-btn"/>
-            <Button text="Items" fx:id="itemsBtn" styleClass="sidebar-btn"/>
-            <Button text="Categories" fx:id="categoriesBtn" styleClass="sidebar-btn"/>
-            <Button text="Borrowers" fx:id="borrowersBtn" styleClass="sidebar-btn"/>
-            <Button text="Incharges" fx:id="inchargesBtn" styleClass="sidebar-btn"/>
+        <VBox alignment="TOP_CENTER" spacing="10" style="-fx-background-color: #2c3e50; -fx-padding: 15;">
+            <Label style="-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;" text="Inventory Dashboard" />
+            <Button fx:id="dashboardBtn" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="150.0" styleClass="sidebar-btn" text="Dashboard" textAlignment="CENTER" VBox.vgrow="ALWAYS">
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor></Button>
+            <Button fx:id="itemsBtn" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="150.0" styleClass="sidebar-btn" text="Items" textAlignment="CENTER" VBox.vgrow="ALWAYS">
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor></Button>
+            <Button fx:id="categoriesBtn" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="150.0" styleClass="sidebar-btn" text="Categories" textAlignment="CENTER" VBox.vgrow="ALWAYS">
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor></Button>
+            <Button fx:id="borrowersBtn" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="150.0" styleClass="sidebar-btn" text="Borrowers" textAlignment="CENTER" VBox.vgrow="ALWAYS">
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor></Button>
+            <Button fx:id="inchargesBtn" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="150.0" styleClass="sidebar-btn" text="Incharges" textAlignment="CENTER" VBox.vgrow="ALWAYS">
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor></Button>
         </VBox>
     </left>
 
@@ -24,8 +40,8 @@
     <center>
         <StackPane fx:id="mainContent" style="-fx-background-color: #f8f9fa; -fx-padding: 20;">
             <!-- Default dashboard content -->
-            <VBox alignment="CENTER" spacing="20">
-                <Label text="Welcome to the Inventory Dashboard" styleClass="title-label"/>
+            <VBox alignment="CENTER" prefHeight="610.0" prefWidth="827.0" spacing="20">
+                <Label styleClass="title-label" text="Welcome to the Inventory Dashboard" />
                 <Label text="Select a module from the sidebar to get started." />
             </VBox>
         </StackPane>

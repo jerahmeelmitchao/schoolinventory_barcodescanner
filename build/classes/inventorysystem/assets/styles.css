@@ -142,6 +142,11 @@
     -fx-background-color: #ecf6fd; /* highlight selected row */
 }
 
+.table-view .table-row-cell:filled:selected .text {
+    -fx-fill: black;          /* make text black when selected */
+    -fx-font-weight: bold;    /* make text bold when selected */
+}
+
 .table-view .table-cell {
     -fx-alignment: CENTER_LEFT;
     -fx-padding: 6 10 6 10;
@@ -195,8 +200,8 @@
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-background-radius: 6;
-    -fx-padding: 10 15 10 15;
-    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 5 15 5 15;
+    -fx-alignment: CENTER;
 }
 
 .sidebar-btn:hover {
