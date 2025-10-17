@@ -1,6 +1,26 @@
 /* Main background */
-.mainFxmlClass{
+.mainFxmlClass {
     -fx-background-color: #f8f9fa;
+    -fx-text-fill: #2c3e50;
+}
+
+/* General Labels */
+.label {
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 14px;
+}
+
+/* Dashboard Stat Labels (📦 Total Items, etc.) */
+.stats-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.stats-value {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2980b9; /* bluish accent for numbers */
 }
 
 /* Title Label */
@@ -17,7 +37,6 @@
     -fx-border-color: #bdc3c7;
     -fx-padding: 6;
 }
-
 .text-field:focused {
     -fx-border-color: #3498db;
     -fx-background-color: #ecf6fd;
@@ -31,7 +50,6 @@
     -fx-background-radius: 6;
     -fx-padding: 8 15 8 15;
 }
-
 .primary-btn:hover {
     -fx-background-color: #2980b9;
 }
@@ -43,7 +61,6 @@
     -fx-background-radius: 6;
     -fx-padding: 8 15 8 15;
 }
-
 .secondary-btn:hover {
     -fx-background-color: #27ae60;
 }
@@ -55,9 +72,19 @@
     -fx-background-radius: 6;
     -fx-padding: 8 15 8 15;
 }
-
 .danger-btn:hover {
     -fx-background-color: #c0392b;
+}
+
+.cancel-btn {
+    -fx-background-color: #95a5a6;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 8 15 8 15;
+}
+.cancel-btn:hover {
+    -fx-background-color: #7f8c8d;
 }
 
 /* Table Styling */
@@ -66,135 +93,84 @@
     -fx-border-color: #dcdcdc;
     -fx-border-radius: 6;
 }
-
 .table-view .column-header-background {
     -fx-background-color: #34495e;
 }
-
-.table-view .column-header, .table-view .filler {
-    -fx-size: 40px;
-    -fx-border-width: 0 0 1 0;
-    -fx-border-color: #2c3e50;
-    -fx-background-color: transparent;
-}
-
 .table-view .column-header .label {
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }
-/* ComboBox Styling */
-.combo-box {
-    -fx-background-radius: 6;
-    -fx-border-radius: 6;
-    -fx-border-color: #bdc3c7;
-    -fx-padding: 6 5 6 5; /* top-right-bottom-left */
-    -fx-background-color: white;
-    -fx-pref-width: 300px; /* set width same as TextFields */
-}
-
-.combo-box:focused {
-    -fx-border-color: #3498db;
-    -fx-background-color: #ecf6fd;
-}
-
-.combo-box .arrow-button {
-    -fx-background-color: transparent;
-}
-
-.combo-box .list-cell {
-    -fx-padding: 4 6 4 6;
-}
-
-.combo-box .list-view {
-    -fx-background-color: white;
-    -fx-border-color: #bdc3c7;
-    -fx-border-radius: 6;
-}
-/* Cancel Button */
-.cancel-btn {
-    -fx-background-color: #95a5a6;   /* Gray tone */
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-background-radius: 6;
-    -fx-padding: 8 15 8 15;
-}
-
-.cancel-btn:hover {
-    -fx-background-color: #7f8c8d;  /* Darker gray on hover */
-}
-/* Category Table Styling */
-.table-view .column-header-background {
-    -fx-background-color: #34495e; /* dark header background */
-}
-
-.table-view .column-header .label {
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-font-size: 14px;
-}
-
 .table-view .table-row-cell {
     -fx-background-color: white;
 }
-
-.table-view .table-row-cell:filled:selected, 
-.table-view .table-row-cell:focused:selected {
-    -fx-background-color: #ecf6fd; /* highlight selected row */
+.table-view .table-row-cell:hover {
+    -fx-background-color: #f0f8ff;
 }
-
+.table-view .table-row-cell:filled:selected {
+    -fx-background-color: #ecf6fd;
+}
 .table-view .table-row-cell:filled:selected .text {
-    -fx-fill: black;          /* make text black when selected */
-    -fx-font-weight: bold;    /* make text bold when selected */
+    -fx-fill: black;
+    -fx-font-weight: bold;
 }
-
 .table-view .table-cell {
     -fx-alignment: CENTER_LEFT;
     -fx-padding: 6 10 6 10;
 }
 
-/* Labels in GridPane */
+/* ComboBox Styling */
+.combo-box {
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: #bdc3c7;
+    -fx-padding: 6 5 6 5;
+    -fx-background-color: white;
+    -fx-pref-width: 300px;
+}
+.combo-box:focused {
+    -fx-border-color: #3498db;
+    -fx-background-color: #ecf6fd;
+}
+
+/* HBox, VBox, Grid Styling */
+.vbox {
+    -fx-spacing: 12px;
+}
+.hbox > .button {
+    -fx-cursor: hand;
+}
 .grid-pane > .label {
     -fx-text-fill: #2c3e50;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
 }
 
-/* HBox Buttons Spacing */
-.hbox > .button {
-    -fx-cursor: hand;
+/* ScrollPane */
+.scroll-pane {
+    -fx-background: transparent;
 }
 
-/* Focus effect for TextFields and ComboBoxes */
-.text-field:focused, .combo-box:focused {
-    -fx-effect: dropshadow(gaussian, rgba(52,152,219,0.2), 5, 0, 0, 0);
+/* Charts */
+.chart {
+    -fx-padding: 10;
 }
-
-/* Hover effect for Table Rows */
-.table-row-cell:hover {
-    -fx-background-color: #f0f8ff;
+.chart-axis {
+    -fx-tick-label-fill: #2c3e50;
+    -fx-tick-label-font-size: 12px;
 }
-
-/* Scrollbar Styling for TableViews */
-.table-view .scroll-bar:vertical {
+.chart-title {
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+.chart-legend {
     -fx-background-color: transparent;
-    -fx-padding: 0 0 0 0;
+}
+.chart-plot-background {
+    -fx-background-color: transparent;
 }
 
-.table-view .scroll-bar .thumb {
-    -fx-background-color: #bdc3c7;
-    -fx-background-insets: 2;
-    -fx-background-radius: 4;
-}
-
-.table-view .scroll-bar .thumb:hover {
-    -fx-background-color: #95a5a6;
-}
-
-/* General VBox Padding */
-.vbox {
-    -fx-spacing: 12px;
-}
-/* Sidebar buttons */
+/* Sidebar Buttons */
 .sidebar-btn {
     -fx-background-color: #34495e;
     -fx-text-fill: white;
@@ -203,8 +179,6 @@
     -fx-padding: 5 15 5 15;
     -fx-alignment: CENTER;
 }
-
 .sidebar-btn:hover {
     -fx-background-color: #2980b9;
 }
-

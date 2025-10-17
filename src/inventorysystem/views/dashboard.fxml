@@ -33,6 +33,11 @@
             <cursor>
                <Cursor fx:constant="HAND" />
             </cursor></Button>
+         <Button fx:id="scannedItemsBtn" alignment="CENTER" layoutX="50.0" layoutY="225.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="150.0" styleClass="sidebar-btn" text="Scanned" textAlignment="CENTER">
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor>
+         </Button>
         </VBox>
     </left>
 
