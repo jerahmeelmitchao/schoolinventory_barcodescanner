@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 17, 2025 at 05:15 AM
+-- Generation Time: Oct 17, 2025 at 07:53 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -73,14 +73,6 @@ CREATE TABLE `borrow_records` (
   `remarks` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `borrow_records`
---
-
-INSERT INTO `borrow_records` (`record_id`, `item_id`, `borrower_id`, `borrow_date`, `return_date`, `quantity_borrowed`, `status`, `remarks`) VALUES
-(1, 2, 3, '2025-09-30 00:00:00', '2025-09-30 00:00:00', 1, 'Returned', 'na'),
-(2, 2, 3, '2025-09-30 00:00:00', NULL, 1, 'Borrowed', NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -100,7 +92,8 @@ INSERT INTO `categories` (`category_id`, `category_name`) VALUES
 (1, 'Electronics'),
 (2, 'Furniture'),
 (3, 'Sports'),
-(4, 'Stationery');
+(4, 'Stationery'),
+(5, 'Tools');
 
 -- --------------------------------------------------------
 
@@ -121,7 +114,9 @@ CREATE TABLE `incharge` (
 --
 
 INSERT INTO `incharge` (`incharge_id`, `incharge_name`, `position`, `contact_info`, `assigned_category_id`) VALUES
-(1, 'Juan Dela Cruz', 'Manager', '09123456789', 3);
+(1, 'Juan Dela Cruz', 'Manager', '09123456789', 3),
+(2, 'Maria Santos', 'Supervisor', '09998887777', 2),
+(3, 'Paolo Reyes', 'Technician', '09123451234', 3);
 
 -- --------------------------------------------------------
 
@@ -151,7 +146,16 @@ CREATE TABLE `items` (
 --
 
 INSERT INTO `items` (`item_id`, `item_name`, `barcode`, `category_id`, `quantity`, `unit`, `date_acquired`, `last_scanned`, `serviceability_status`, `condition_status`, `storage_location`, `availability_status`, `incharge_id`, `added_by`) VALUES
-(2, 'Ball', '123243242', 3, 22, 'pcs', '2025-09-13', NULL, 'Serviceable', 'OK', NULL, 'Available', 1, NULL);
+(1, 'Laptop Acer Aspire', 'ELEC001', 1, 12, 'pcs', '2025-01-12', '2025-10-05 10:00:00', 'Serviceable', 'OK', 'Room 101', 'Available', 1, 'admin'),
+(2, 'Projector Epson X300', 'ELEC002', 1, 3, 'pcs', '2025-02-20', '2025-10-08 14:00:00', 'Serviceable', 'Damaged', 'Room 102', 'Unavailable', 1, 'staff1'),
+(3, 'Office Chair', 'FUR001', 2, 20, 'pcs', '2025-03-15', '2025-08-10 09:00:00', 'Serviceable', 'OK', 'Room 201', 'Available', 2, 'staff2'),
+(4, 'Basketball', 'SPT001', 3, 6, 'pcs', '2025-04-10', '2025-09-25 17:00:00', 'Serviceable', 'OK', 'Gym', 'Available', 3, 'staff1'),
+(5, 'Volleyball', 'SPT002', 3, 2, 'pcs', '2025-04-15', NULL, 'Serviceable', 'OK', 'Gym', 'Available', 3, 'staff3'),
+(6, 'Printer HP Deskjet', 'ELEC003', 1, 4, 'pcs', '2025-05-01', '2025-07-05 11:30:00', 'Unserviceable', 'Disposed', 'Room 103', 'Unavailable', 1, 'staff1'),
+(7, 'Ballpen Blue', 'STA001', 4, 120, 'pcs', '2025-06-10', NULL, 'Serviceable', 'OK', 'Storage A', 'Available', 2, 'staff2'),
+(8, 'Hammer', 'TOO001', 5, 1, 'pcs', '2025-07-12', '2025-10-10 09:30:00', 'Serviceable', 'OK', 'Workshop', 'Available', 2, 'admin'),
+(9, 'Ruler 12-inch', 'STA002', 4, 10, 'pcs', '2025-08-05', '2025-10-06 13:00:00', 'Serviceable', 'OK', 'Storage A', 'Available', 2, 'staff2'),
+(10, 'Badminton Racket', 'SPT003', 3, 4, 'pcs', '2025-09-01', NULL, 'Serviceable', 'OK', 'Gym', 'Available', 3, 'staff3');
 
 -- --------------------------------------------------------
 
@@ -164,6 +168,23 @@ CREATE TABLE `scan_log` (
   `item_id` int(11) NOT NULL,
   `scan_date` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `scan_log`
+--
+
+INSERT INTO `scan_log` (`scan_id`, `item_id`, `scan_date`) VALUES
+(1, 1, '2025-10-01 10:00:00'),
+(2, 1, '2025-10-02 14:00:00'),
+(3, 1, '2025-10-03 15:00:00'),
+(4, 2, '2025-10-08 09:00:00'),
+(5, 3, '2025-10-10 10:00:00'),
+(6, 3, '2025-10-12 11:00:00'),
+(7, 4, '2025-09-20 08:00:00'),
+(8, 4, '2025-09-21 09:00:00'),
+(9, 8, '2025-10-10 10:00:00'),
+(10, 9, '2025-10-05 11:00:00'),
+(11, 9, '2025-10-07 11:30:00');
 
 -- --------------------------------------------------------
 
@@ -279,19 +300,19 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `incharge`
 --
 ALTER TABLE `incharge`
-  MODIFY `incharge_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `incharge_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `scan_log`
 --
 ALTER TABLE `scan_log`
-  MODIFY `scan_id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `scan_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `users`
