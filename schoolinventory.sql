@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 01, 2025 at 03:21 PM
+-- Generation Time: Oct 17, 2025 at 05:15 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -137,17 +137,33 @@ CREATE TABLE `items` (
   `quantity` int(11) NOT NULL DEFAULT 0 CHECK (`quantity` >= 0),
   `unit` varchar(50) DEFAULT NULL,
   `date_acquired` date DEFAULT NULL,
+  `last_scanned` datetime DEFAULT NULL,
   `serviceability_status` enum('Serviceable','Unserviceable') NOT NULL DEFAULT 'Serviceable',
+  `condition_status` enum('OK','Damaged','Disposed') DEFAULT 'OK',
+  `storage_location` varchar(100) DEFAULT NULL,
   `availability_status` enum('Available','Unavailable') NOT NULL DEFAULT 'Available',
-  `incharge_id` int(11) DEFAULT NULL
+  `incharge_id` int(11) DEFAULT NULL,
+  `added_by` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `items`
 --
 
-INSERT INTO `items` (`item_id`, `item_name`, `barcode`, `category_id`, `quantity`, `unit`, `date_acquired`, `serviceability_status`, `availability_status`, `incharge_id`) VALUES
-(2, 'Ball', '123243242', 3, 22, 'pcs', '2025-09-13', 'Serviceable', 'Available', 1);
+INSERT INTO `items` (`item_id`, `item_name`, `barcode`, `category_id`, `quantity`, `unit`, `date_acquired`, `last_scanned`, `serviceability_status`, `condition_status`, `storage_location`, `availability_status`, `incharge_id`, `added_by`) VALUES
+(2, 'Ball', '123243242', 3, 22, 'pcs', '2025-09-13', NULL, 'Serviceable', 'OK', NULL, 'Available', 1, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `scan_log`
+--
+
+CREATE TABLE `scan_log` (
+  `scan_id` bigint(20) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `scan_date` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -218,6 +234,13 @@ ALTER TABLE `items`
   ADD KEY `idx_items_barcode` (`barcode`);
 
 --
+-- Indexes for table `scan_log`
+--
+ALTER TABLE `scan_log`
+  ADD PRIMARY KEY (`scan_id`),
+  ADD KEY `item_id` (`item_id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -265,6 +288,12 @@ ALTER TABLE `items`
   MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT for table `scan_log`
+--
+ALTER TABLE `scan_log`
+  MODIFY `scan_id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
@@ -293,6 +322,12 @@ ALTER TABLE `incharge`
 ALTER TABLE `items`
   ADD CONSTRAINT `fk_items_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_items_incharge` FOREIGN KEY (`incharge_id`) REFERENCES `incharge` (`incharge_id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `scan_log`
+--
+ALTER TABLE `scan_log`
+  ADD CONSTRAINT `scan_log_ibfk_1` FOREIGN KEY (`item_id`) REFERENCES `items` (`item_id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
