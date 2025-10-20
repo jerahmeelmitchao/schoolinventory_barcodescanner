@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -20,13 +21,16 @@ public class Main extends Application {
             // Create scene with fixed size
             // Scene size for dashboard 
             //Scene scene = new Scene(root, 1200, 750);
-
             // Scene size for login 
             Scene scene = new Scene(root, 700, 500);
             scene.getStylesheets().add(getClass().getResource("/inventorysystem/assets/styles.css").toExternalForm());
 
             // Stage setup
             primaryStage.setTitle("Inventory Management System");
+            // ✅ Add app icon here
+            primaryStage.getIcons().add(
+                    new Image(getClass().getResourceAsStream("/inventorysystem/assets/app_icon.png"))
+            );
             primaryStage.setScene(scene);
 
             // Disable resizing to make it fixed
