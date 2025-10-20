@@ -52,10 +52,29 @@ public class ItemDAO {
     }
 
     public List<Item> getAllItems() {
-        List<Item> list = new ArrayList<>();
-        String sql = "SELECT * FROM items";
+        List<Item> items = new ArrayList<>();
 
-        try (Connection conn = DatabaseConnection.getConnection(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+        String sql = """
+        SELECT 
+            i.item_id,
+            i.item_name,
+            i.barcode,
+            i.category_id,
+            c.category_name,
+            i.quantity,
+            i.unit,
+            i.date_acquired,
+            i.serviceability_status,
+            i.availability_status,
+            i.last_scanned,
+            i.incharge_id,       -- ✅ Added this field
+            ic.incharge_name
+        FROM items i
+        LEFT JOIN categories c ON i.category_id = c.category_id
+        LEFT JOIN incharge ic ON i.incharge_id = ic.incharge_id
+    """;
+
+        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Item item = new Item(
@@ -68,14 +87,22 @@ public class ItemDAO {
                         rs.getDate("date_acquired").toLocalDate(),
                         rs.getString("serviceability_status"),
                         rs.getString("availability_status"),
-                        rs.getInt("incharge_id")
+                        rs.getInt("incharge_id") // ✅ Now valid
                 );
-                list.add(item);
+
+                item.setCategoryName(rs.getString("category_name"));
+                item.setLastScanned(rs.getDate("last_scanned") != null
+                        ? rs.getDate("last_scanned").toLocalDate() : null);
+                item.setInChargeName(rs.getString("incharge_name"));
+
+                items.add(item);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return list;
+
+        return items;
     }
 
     public Item getItemById(int id) {

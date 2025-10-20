@@ -11,12 +11,12 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
+import java.time.format.DateTimeFormatter;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-import javafx.event.ActionEvent;
-
+import javafx.collections.transformation.FilteredList;
 
 public class ItemController {
 
@@ -51,55 +51,93 @@ public class ItemController {
     @FXML
     private TableColumn<Item, String> colUnit;
     @FXML
-    private TableColumn<Item, LocalDate> colDateAcquired;
+    private TableColumn<Item, String> colDateAcquired;
     @FXML
     private TableColumn<Item, String> colServiceability;
     @FXML
     private TableColumn<Item, String> colAvailability;
-    
+    @FXML
+    private TableColumn<Item, String> colCategory;
+    @FXML
+    private TableColumn<Item, String> colLastScanned;
+    @FXML
+    private TableColumn<Item, String> colInCharge;
 
+    @FXML
+    private TextField searchField;
+
+    @FXML
+    private ComboBox<String> filterCategoryComboBox, filterStatusComboBox;
+
+    @FXML
+    private Button clearFilterButton;
+
+    private ObservableList<Item> masterData = FXCollections.observableArrayList();
+    private FilteredList<Item> filteredData;
     private final ItemDAO itemDAO = new ItemDAO();
     private final CategoryDAO categoryDAO = new CategoryDAO();
     private ObservableList<Item> itemList;
     private ObservableList<String> categoriesList;
     private Map<String, Integer> categoryMap;
 
+    private final DateTimeFormatter displayFormatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy");
+
     @FXML
     public void initialize() {
-        // Bind table columns
+        // ✅ Bind table columns properly
         colItemName.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getItemName()));
         colBarcode.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getBarcode()));
-       // colBarcode.setCellFactory(column -> new BarcodeTableCell());
         colQuantity.setCellValueFactory(cd -> new SimpleIntegerProperty(cd.getValue().getQuantity()).asObject());
         colUnit.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getUnit()));
-        colDateAcquired.setCellValueFactory(cd -> new SimpleObjectProperty<>(cd.getValue().getDateAcquired()));
         colServiceability.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getServiceabilityStatus()));
         colAvailability.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getAvailabilityStatus()));
-     
-        // Load categories and items
+        // ✅ In-Charge and Last Scanned columns
+        colInCharge.setCellValueFactory(cd
+                -> new SimpleStringProperty(cd.getValue().getInChargeName())
+        );
+        colDateAcquired.setCellValueFactory(cd -> {
+            LocalDate date = cd.getValue().getDateAcquired();
+            String formatted = (date != null) ? date.format(displayFormatter) : "—";
+            return new SimpleStringProperty(formatted);
+        });
+
+        colLastScanned.setCellValueFactory(cd -> {
+            LocalDate date = cd.getValue().getLastScanned();
+            String formatted = (date != null) ? date.format(displayFormatter) : "—";
+            return new SimpleStringProperty(formatted);
+        });
+
+        // ✅ Optional: if you added a categoryName property in Item.java
+        if (colCategory != null) {
+            colCategory.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getCategoryName()));
+        }
+
+        // ✅ Load data
         loadCategories();
         loadItems();
 
-        // Initially disable update/delete buttons
+        // ✅ Set up filtering (search + combo filters)
+        setupFiltering();
+
+        // ✅ Disable update/delete until selection
         updateButton.setDisable(true);
         deleteButton.setDisable(true);
 
-        // Numeric-only input for quantity
+        // ✅ Numeric-only filter for quantity
         quantityField.addEventFilter(KeyEvent.KEY_TYPED, e -> {
             if (!e.getCharacter().matches("\\d")) {
                 e.consume();
             }
         });
 
-        // Populate fields when selecting a row
+        // ✅ Table selection logic
         itemTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             if (newSel != null) {
                 populateFields(newSel);
-                // Disable Add when editing
                 addButton.setDisable(true);
                 updateButton.setDisable(false);
                 deleteButton.setDisable(false);
-                cancelButton.setVisible(true); 
+                cancelButton.setVisible(true);
             } else {
                 clearFields();
             }
@@ -123,7 +161,8 @@ public class ItemController {
 
     private void loadItems() {
         itemList = FXCollections.observableArrayList(itemDAO.getAllItems());
-        itemTable.setItems(itemList);
+        masterData.setAll(itemList); // ✅ so filtered list works
+        itemTable.setItems(masterData);
     }
 
     private void populateFields(Item item) {
@@ -300,5 +339,63 @@ public class ItemController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+    // Call this inside initialize()
+
+    private void setupFiltering() {
+        filteredData = new FilteredList<>(masterData, p -> true);
+
+        // Populate filter dropdowns
+        filterCategoryComboBox.setItems(categoriesList);
+        filterStatusComboBox.setItems(FXCollections.observableArrayList("Available", "Unavailable"));
+
+        searchField.textProperty().addListener((obs, oldValue, newValue) -> applyFilters());
+        filterCategoryComboBox.valueProperty().addListener((obs, oldValue, newValue) -> applyFilters());
+        filterStatusComboBox.valueProperty().addListener((obs, oldValue, newValue) -> applyFilters());
+
+        itemTable.setItems(filteredData);
+    }
+
+    private void applyFilters() {
+        String search = searchField.getText() == null ? "" : searchField.getText().toLowerCase().trim();
+        String category = filterCategoryComboBox.getValue();
+        String status = filterStatusComboBox.getValue();
+
+        filteredData.setPredicate(item -> {
+            if (item == null) {
+                return false;
+            }
+
+            // 🔍 Combine all searchable text fields
+            String combined = String.join(" ",
+                    safe(item.getItemName()),
+                    safe(item.getBarcode()),
+                    safe(item.getCategoryName()),
+                    safe(item.getUnit()),
+                    safe(item.getServiceabilityStatus()),
+                    safe(item.getAvailabilityStatus()),
+                    safe(item.getInChargeName()),
+                    item.getLastScanned() != null ? item.getLastScanned().toString() : ""
+            ).toLowerCase();
+
+            boolean matchesSearch = search.isEmpty() || combined.contains(search);
+            boolean matchesCategory = (category == null || category.isEmpty() || safe(item.getCategoryName()).equalsIgnoreCase(category));
+            boolean matchesStatus = (status == null || status.isEmpty() || safe(item.getAvailabilityStatus()).equalsIgnoreCase(status));
+
+            return matchesSearch && matchesCategory && matchesStatus;
+        });
+    }
+
+    // ✅ Helper to handle null strings safely
+    private String safe(String value) {
+        return value == null ? "" : value;
+    }
+
+    @FXML
+    private void handleClearFilters() {
+        searchField.clear();
+        filterCategoryComboBox.getSelectionModel().clearSelection();
+        filterStatusComboBox.getSelectionModel().clearSelection();
+        applyFilters();
     }
 }

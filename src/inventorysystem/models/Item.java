@@ -7,6 +7,7 @@ package inventorysystem.models;
 import java.time.LocalDate;
 
 public class Item {
+
     private int itemId;
     private String itemName;
     private String barcode;
@@ -17,10 +18,13 @@ public class Item {
     private String serviceabilityStatus;
     private String availabilityStatus;
     private int inchargeId;
+    private LocalDate lastScanned;
+    private String inChargeName;
+    private String categoryName; // not stored in DB, just for display
 
     public Item(int itemId, String itemName, String barcode, int categoryId, int quantity,
-                String unit, LocalDate dateAcquired, String serviceabilityStatus,
-                String availabilityStatus, int inchargeId) {
+            String unit, LocalDate dateAcquired, String serviceabilityStatus,
+            String availabilityStatus, int inchargeId) {
         this.itemId = itemId;
         this.itemName = itemName;
         this.barcode = barcode;
@@ -34,25 +38,109 @@ public class Item {
     }
 
     // Getters and setters
-    public int getItemId() { return itemId; }
-    public String getItemName() { return itemName; }
-    public String getBarcode() { return barcode; }
-    public int getCategoryId() { return categoryId; }
-    public int getQuantity() { return quantity; }
-    public String getUnit() { return unit; }
-    public LocalDate getDateAcquired() { return dateAcquired; }
-    public String getServiceabilityStatus() { return serviceabilityStatus; }
-    public String getAvailabilityStatus() { return availabilityStatus; }
-    public int getInchargeId() { return inchargeId; }
+    public int getItemId() {
+        return itemId;
+    }
 
-    public void setItemId(int itemId) { this.itemId = itemId; }
-    public void setItemName(String itemName) { this.itemName = itemName; }
-    public void setBarcode(String barcode) { this.barcode = barcode; }
-    public void setCategoryId(int categoryId) { this.categoryId = categoryId; }
-    public void setQuantity(int quantity) { this.quantity = quantity; }
-    public void setUnit(String unit) { this.unit = unit; }
-    public void setDateAcquired(LocalDate dateAcquired) { this.dateAcquired = dateAcquired; }
-    public void setServiceabilityStatus(String serviceabilityStatus) { this.serviceabilityStatus = serviceabilityStatus; }
-    public void setAvailabilityStatus(String availabilityStatus) { this.availabilityStatus = availabilityStatus; }
-    public void setInchargeId(int inchargeId) { this.inchargeId = inchargeId; }
+    public String getItemName() {
+        return itemName;
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public LocalDate getDateAcquired() {
+        return dateAcquired;
+    }
+
+    public String getServiceabilityStatus() {
+        return serviceabilityStatus;
+    }
+
+    public String getAvailabilityStatus() {
+        return availabilityStatus;
+    }
+
+    public int getInchargeId() {
+        return inchargeId;
+    }
+
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public void setDateAcquired(LocalDate dateAcquired) {
+        this.dateAcquired = dateAcquired;
+    }
+
+    public void setServiceabilityStatus(String serviceabilityStatus) {
+        this.serviceabilityStatus = serviceabilityStatus;
+    }
+
+    public void setAvailabilityStatus(String availabilityStatus) {
+        this.availabilityStatus = availabilityStatus;
+    }
+
+    public void setInchargeId(int inchargeId) {
+        this.inchargeId = inchargeId;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    // Getters
+    public String getInChargeName() {
+        return inChargeName;
+    }
+
+    // Setters
+    public void setInChargeName(String inChargeName) {
+        this.inChargeName = inChargeName;
+    }
+
+    public LocalDate getLastScanned() {
+        return lastScanned;
+    }
+
+    public void setLastScanned(LocalDate lastScanned) {
+        this.lastScanned = lastScanned;
+    }
 }

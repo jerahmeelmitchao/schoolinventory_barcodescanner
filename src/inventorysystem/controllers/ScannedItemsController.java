@@ -14,7 +14,10 @@ import javafx.scene.layout.VBox;
 
 import java.sql.*;
 import java.time.LocalDate;
-import javafx.scene.layout.AnchorPane;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.time.LocalDateTime;
+
 import javafx.scene.layout.StackPane;
 
 public class ScannedItemsController {
@@ -53,11 +56,26 @@ public class ScannedItemsController {
 
     private final ObservableList<ScannedItem> scannedList = FXCollections.observableArrayList();
     @FXML
+
     private StackPane chartContainer;
+    private final DateTimeFormatter displayFormatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy");
 
     public void initialize() {
         colItemName.setCellValueFactory(data -> data.getValue().itemNameProperty());
-        colScanDate.setCellValueFactory(data -> data.getValue().scanDateProperty());
+        colScanDate.setCellValueFactory(data -> {
+            String raw = data.getValue().getScanDate();
+            String formatted = "—";
+            try {
+                if (raw != null) {
+                    LocalDate date = LocalDate.parse(raw.split(" ")[0]); // handle timestamps
+                    formatted = date.format(displayFormatter);
+                }
+            } catch (Exception e) {
+                formatted = raw; // fallback to raw if parsing fails
+            }
+            return new SimpleStringProperty(formatted);
+        });
+
         tableScannedItems.setItems(scannedList);
 
         // When user selects a row, show details
@@ -134,7 +152,17 @@ public class ScannedItemsController {
                 lblQuantity.setText("Quantity: " + rs.getInt("quantity"));
                 lblCondition.setText("Condition: " + rs.getString("condition_status"));
                 lblLocation.setText("Storage Location: " + rs.getString("storage_location"));
-                lblLastScan.setText("Last Scanned: " + rs.getString("last_scanned"));
+                String lastScannedRaw = rs.getString("last_scanned");
+                String formattedLastScanned = "—";
+                if (lastScannedRaw != null) {
+                    try {
+                        LocalDate date = LocalDate.parse(lastScannedRaw.split(" ")[0]);
+                        formattedLastScanned = date.format(displayFormatter);
+                    } catch (Exception e) {
+                        formattedLastScanned = lastScannedRaw;
+                    }
+                }
+                lblLastScan.setText(formattedLastScanned);
             }
 
         } catch (SQLException e) {

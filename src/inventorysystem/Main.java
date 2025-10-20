@@ -19,7 +19,7 @@ public class Main extends Application {
 
             // Create scene with fixed size
             // Scene size for dashboard 
-            Scene scene = new Scene(root, 1100, 700);
+            Scene scene = new Scene(root, 1200, 750);
 
             // Scene size for login 
             //Scene scene = new Scene(root, 700, 500);
