@@ -67,7 +67,7 @@ public class LoginController implements Initializable {
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
                 // Create new scene with different size
-                Scene dashboardScene = new Scene(dashboardRoot, 1100, 700);
+                Scene dashboardScene = new Scene(dashboardRoot, 1200, 750);
                 dashboardScene.getStylesheets().add(getClass().getResource("/inventorysystem/assets/styles.css").toExternalForm());
 
                 // Set scene & allow resizing
