@@ -54,7 +54,7 @@ The system provides a modern dashboard, data filtering, and real-time charts to 
 ### 1️⃣ Clone the Project
 
 ```bash
-git clone https://github.com/yourusername/school-inventory-system.git
+git clone https://github.com/jerahmeelmitchao/school-inventory-system.git
 cd school-inventory-system
 ```
 
