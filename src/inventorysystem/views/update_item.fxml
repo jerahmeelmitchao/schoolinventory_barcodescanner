@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="inventorysystem.controllers.UpdateItemController"
+            style="-fx-background-color: white; -fx-padding: 20;">
+    
+    <ScrollPane fitToWidth="true" fitToHeight="true">
+        <content>
+            <VBox spacing="15">
+                <GridPane hgap="10" vgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints halignment="RIGHT" minWidth="150"/>
+                        <ColumnConstraints halignment="LEFT" minWidth="250"/>
+                    </columnConstraints>
+
+                    <Label text="Item Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <TextField fx:id="itemNameField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                    <Label text="Barcode:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <TextField fx:id="barcodeField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                    <Label text="Category:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <ComboBox fx:id="categoryComboBox" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                    <Label text="Quantity:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <TextField fx:id="quantityField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                    <Label text="Unit:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                    <TextField fx:id="unitField" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                    <Label text="Date Acquired:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                    <DatePicker fx:id="dateAcquiredPicker" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+                    <Label text="Serviceability:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                    <ComboBox fx:id="serviceabilityComboBox" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+
+                    <Label text="Condition:" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+                    <ComboBox fx:id="conditionComboBox" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+
+                    <Label text="Availability:" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
+                    <ComboBox fx:id="availabilityComboBox" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
+
+                    <Label text="Storage Location:" GridPane.rowIndex="9" GridPane.columnIndex="0"/>
+                    <TextField fx:id="locationField" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
+
+                    <Label text="In-Charge:" GridPane.rowIndex="10" GridPane.columnIndex="0"/>
+                    <ComboBox fx:id="inChargeComboBox" GridPane.rowIndex="10" GridPane.columnIndex="1"/>
+
+                    <Label text="Added By:" GridPane.rowIndex="11" GridPane.columnIndex="0"/>
+                    <TextField fx:id="addedByField" GridPane.rowIndex="11" GridPane.columnIndex="1"/>
+                </GridPane>
+
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button text="Cancel" onAction="#handleCancel" styleClass="cancel-btn"/>
+                    <Button text="Update Item" onAction="#handleUpdate" styleClass="primary-btn"/>
+                </HBox>
+            </VBox>
+        </content>
+    </ScrollPane>
+</AnchorPane>

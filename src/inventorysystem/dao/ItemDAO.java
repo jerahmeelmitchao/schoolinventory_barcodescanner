@@ -10,7 +10,12 @@ import java.util.List;
 public class ItemDAO {
 
     public boolean addItem(Item item) {
-        String sql = "INSERT INTO items (item_name, barcode, category_id, quantity, unit, date_acquired, serviceability_status, availability_status, incharge_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = """
+            INSERT INTO items 
+            (item_name, barcode, category_id, quantity, unit, date_acquired, serviceability_status, 
+            condition_status, availability_status, storage_location, incharge_id, added_by) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """;
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, item.getItemName());
@@ -20,18 +25,20 @@ public class ItemDAO {
             stmt.setString(5, item.getUnit());
             stmt.setDate(6, Date.valueOf(item.getDateAcquired()));
             stmt.setString(7, item.getServiceabilityStatus());
-            stmt.setString(8, item.getAvailabilityStatus());
+            stmt.setString(8, item.getConditionStatus());
+            stmt.setString(9, item.getAvailabilityStatus());
+            stmt.setString(10, item.getStorageLocation());
 
-            // Handle incharge_id (nullable if not provided)
             if (item.getInchargeId() > 0) {
-                stmt.setInt(9, item.getInchargeId());
+                stmt.setInt(11, item.getInchargeId());
             } else {
-                stmt.setNull(9, Types.INTEGER);
+                stmt.setNull(11, Types.INTEGER);
             }
+
+            stmt.setString(12, item.getAddedBy());
 
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
-                System.out.println("⚠ No rows inserted.");
                 return false;
             }
 
@@ -43,36 +50,23 @@ public class ItemDAO {
             return true;
 
         } catch (SQLException e) {
-            System.err.println("❌ Error inserting item:");
-            System.err.println("SQL State: " + e.getSQLState());
-            System.err.println("Error Code: " + e.getErrorCode());
-            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
 
     public List<Item> getAllItems() {
         List<Item> items = new ArrayList<>();
-
         String sql = """
-        SELECT 
-            i.item_id,
-            i.item_name,
-            i.barcode,
-            i.category_id,
-            c.category_name,
-            i.quantity,
-            i.unit,
-            i.date_acquired,
-            i.serviceability_status,
-            i.availability_status,
-            i.last_scanned,
-            i.incharge_id,       -- ✅ Added this field
-            ic.incharge_name
-        FROM items i
-        LEFT JOIN categories c ON i.category_id = c.category_id
-        LEFT JOIN incharge ic ON i.incharge_id = ic.incharge_id
-    """;
+            SELECT 
+                i.item_id, i.item_name, i.barcode, i.category_id, c.category_name, i.quantity,
+                i.unit, i.date_acquired, i.serviceability_status, i.condition_status, 
+                i.availability_status, i.storage_location, i.last_scanned, i.incharge_id,
+                ic.incharge_name, i.added_by
+            FROM items i
+            LEFT JOIN categories c ON i.category_id = c.category_id
+            LEFT JOIN incharge ic ON i.incharge_id = ic.incharge_id
+        """;
 
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
@@ -86,14 +80,16 @@ public class ItemDAO {
                         rs.getString("unit"),
                         rs.getDate("date_acquired").toLocalDate(),
                         rs.getString("serviceability_status"),
+                        rs.getString("condition_status"),
                         rs.getString("availability_status"),
-                        rs.getInt("incharge_id") // ✅ Now valid
+                        rs.getString("storage_location"),
+                        rs.getInt("incharge_id"),
+                        rs.getString("added_by")
                 );
 
                 item.setCategoryName(rs.getString("category_name"));
-                item.setLastScanned(rs.getDate("last_scanned") != null
-                        ? rs.getDate("last_scanned").toLocalDate() : null);
                 item.setInChargeName(rs.getString("incharge_name"));
+                item.setLastScanned(rs.getDate("last_scanned") != null ? rs.getDate("last_scanned").toLocalDate() : null);
 
                 items.add(item);
             }
@@ -105,35 +101,15 @@ public class ItemDAO {
         return items;
     }
 
-    public Item getItemById(int id) {
-        String sql = "SELECT * FROM items WHERE item_id=?";
-        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return new Item(
-                            rs.getInt("item_id"),
-                            rs.getString("item_name"),
-                            rs.getString("barcode"),
-                            rs.getInt("category_id"),
-                            rs.getInt("quantity"),
-                            rs.getString("unit"),
-                            rs.getDate("date_acquired").toLocalDate(),
-                            rs.getString("serviceability_status"),
-                            rs.getString("availability_status"),
-                            rs.getInt("incharge_id")
-                    );
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public void updateItem(Item item) {
-        String sql = "UPDATE items SET item_name=?, barcode=?, category_id=?, quantity=?, unit=?, date_acquired=?, serviceability_status=?, availability_status=?, incharge_id=? WHERE item_id=?";
+        String sql = """
+            UPDATE items SET 
+                item_name=?, barcode=?, category_id=?, quantity=?, unit=?, date_acquired=?,
+                serviceability_status=?, condition_status=?, availability_status=?, 
+                storage_location=?, incharge_id=?, added_by=?
+            WHERE item_id=?
+        """;
+
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, item.getItemName());
@@ -143,19 +119,23 @@ public class ItemDAO {
             stmt.setString(5, item.getUnit());
             stmt.setDate(6, Date.valueOf(item.getDateAcquired()));
             stmt.setString(7, item.getServiceabilityStatus());
-            stmt.setString(8, item.getAvailabilityStatus());
+            stmt.setString(8, item.getConditionStatus());
+            stmt.setString(9, item.getAvailabilityStatus());
+            stmt.setString(10, item.getStorageLocation());
 
             if (item.getInchargeId() > 0) {
-                stmt.setInt(9, item.getInchargeId());
+                stmt.setInt(11, item.getInchargeId());
             } else {
-                stmt.setNull(9, Types.INTEGER);
+                stmt.setNull(11, Types.INTEGER);
             }
 
-            stmt.setInt(10, item.getItemId());
+            stmt.setString(12, item.getAddedBy());
+            stmt.setInt(13, item.getItemId());
+
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            System.err.println("❌ Error updating item: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
