@@ -213,11 +213,13 @@ public class BorrowerController {
         ObservableList<Item> allItems = FXCollections.observableArrayList(itemDAO.getAllItems());
         itemListView.setItems(allItems);
 
-        searchField.textProperty().addListener((obs, old, nw) -> {
-            List<Item> filtered = allItems.stream()
-                    .filter(i -> i.getItemName().toLowerCase().contains(nw.toLowerCase()))
-                    .collect(Collectors.toList());
-            itemListView.setItems(FXCollections.observableArrayList(filtered));
+// Add this to display names instead of object references
+        itemListView.setCellFactory(lv -> new ListCell<Item>() {
+            @Override
+            protected void updateItem(Item item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.getItemName());
+            }
         });
 
         Spinner<Integer> qtySpinner = new Spinner<>(1, 100, 1);
@@ -258,6 +260,7 @@ public class BorrowerController {
     }
 
     // Return panel
+    // Return panel
     private void openReturnPanel(Borrower borrower) {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Return Item");
@@ -266,6 +269,22 @@ public class BorrowerController {
                 .stream().filter(r -> r.getStatus().equals("Borrowed")).toList();
 
         ListView<BorrowRecord> recordListView = new ListView<>(FXCollections.observableArrayList(active));
+
+        // Display readable borrow record info
+        recordListView.setCellFactory(lv -> new ListCell<BorrowRecord>() {
+            @Override
+            protected void updateItem(BorrowRecord record, boolean empty) {
+                super.updateItem(record, empty);
+                if (empty || record == null) {
+                    setText(null);
+                } else {
+                    setText("Item ID: " + record.getItemId()
+                            + ", Qty: " + record.getQuantityBorrowed()
+                            + ", Status: " + record.getStatus());
+                }
+            }
+        });
+
         TextArea remarksArea = new TextArea();
         remarksArea.setPromptText("Remarks...");
 

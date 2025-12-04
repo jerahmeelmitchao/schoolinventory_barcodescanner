@@ -46,7 +46,7 @@
                     <Cursor fx:constant="HAND" />
                 </cursor>
             </Button>
-            <Button fx:id="inchargesBtn" text="In-Charges" prefWidth="160" styleClass="sidebar-btn">
+            <Button fx:id="inchargesBtn" text="Incharge" prefWidth="160" styleClass="sidebar-btn">
                 <cursor>
                     <Cursor fx:constant="HAND" />
                 </cursor>

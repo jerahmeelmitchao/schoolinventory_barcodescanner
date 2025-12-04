@@ -75,7 +75,7 @@ public class SignUpController implements Initializable {
                 Parent root = loader.load();
 
                 Stage stage = (Stage) signInBtn.getScene().getWindow();
-                Scene scene = new Scene(root, 1100, 700);
+                Scene scene = new Scene(root, 700, 500);
                 scene.getStylesheets().add(getClass().getResource("/inventorysystem/assets/styles.css").toExternalForm());
 
                 stage.setScene(scene);
