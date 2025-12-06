@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 20, 2025 at 08:08 PM
+-- Generation Time: Dec 06, 2025 at 10:36 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -142,33 +142,30 @@ CREATE TABLE `items` (
   `item_name` varchar(200) NOT NULL,
   `barcode` varchar(100) DEFAULT NULL,
   `category_id` int(11) DEFAULT NULL,
-  `quantity` int(11) NOT NULL DEFAULT 0 CHECK (`quantity` >= 0),
   `unit` varchar(50) DEFAULT NULL,
   `date_acquired` date DEFAULT NULL,
   `last_scanned` datetime DEFAULT NULL,
-  `serviceability_status` enum('Serviceable','Unserviceable') NOT NULL DEFAULT 'Serviceable',
-  `condition_status` enum('OK','Damaged','Disposed') DEFAULT 'OK',
   `storage_location` varchar(100) DEFAULT NULL,
-  `availability_status` enum('Available','Unavailable') NOT NULL DEFAULT 'Available',
   `incharge_id` int(11) DEFAULT NULL,
-  `added_by` varchar(100) DEFAULT NULL
+  `added_by` varchar(100) DEFAULT NULL,
+  `status` enum('Available','Damaged','Borrowed','Missing','Disposed') NOT NULL DEFAULT 'Available'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `items`
 --
 
-INSERT INTO `items` (`item_id`, `item_name`, `barcode`, `category_id`, `quantity`, `unit`, `date_acquired`, `last_scanned`, `serviceability_status`, `condition_status`, `storage_location`, `availability_status`, `incharge_id`, `added_by`) VALUES
-(1, 'Laptop Dell Inspiron', 'ELEC001', 1, 10, 'pcs', '2025-01-10', '2025-10-10 09:30:00', 'Serviceable', 'OK', 'Room 101', 'Available', 1, 'admin'),
-(2, 'Smart TV Samsung', 'ELEC002', 1, 5, 'pcs', '2025-02-15', '2025-08-25 10:00:00', 'Serviceable', 'Damaged', 'AV Room', 'Unavailable', 1, 'admin'),
-(3, 'Office Table', 'FUR001', 2, 15, 'pcs', '2025-03-20', '2025-09-05 14:00:00', 'Serviceable', 'OK', 'Room 201', 'Available', 2, 'admin'),
-(4, 'Whiteboard', 'FUR002', 2, 6, 'pcs', '2025-04-02', NULL, 'Serviceable', 'OK', 'Room 202', 'Available', 2, 'staff1'),
-(5, 'Basketball', 'SPT001', 3, 8, 'pcs', '2025-05-01', '2025-07-22 16:00:00', 'Serviceable', 'OK', 'Gym', 'Available', 3, 'staff1'),
-(6, 'Volleyball Net', 'SPT002', 3, 2, 'pcs', '2025-06-15', NULL, 'Serviceable', 'OK', 'Gym', 'Available', 3, 'staff2'),
-(7, 'Bond Paper A4', 'STA001', 4, 500, 'sheets', '2025-07-01', '2025-09-30 11:00:00', 'Serviceable', 'OK', 'Storage Room', 'Available', 4, 'staff2'),
-(8, 'Hammer', 'TOO001', 5, 5, 'pcs', '2025-08-10', '2025-10-05 09:30:00', 'Serviceable', 'OK', 'Workshop', 'Available', 5, 'admin'),
-(9, 'Screwdriver Set', 'TOO002', 5, 10, 'sets', '2025-09-01', NULL, 'Serviceable', 'OK', 'Workshop', 'Available', 5, 'admin'),
-(10, 'Printer Canon LBP', 'ELEC003', 1, 3, 'pcs', '2025-09-15', '2025-10-01 08:45:00', 'Unserviceable', 'OK', 'Room 103', 'Unavailable', 1, 'staff1');
+INSERT INTO `items` (`item_id`, `item_name`, `barcode`, `category_id`, `unit`, `date_acquired`, `last_scanned`, `storage_location`, `incharge_id`, `added_by`, `status`) VALUES
+(1, 'Laptop Dell Inspiron', 'ELEC001', 1, 'pcs', '2025-01-10', '2025-10-10 09:30:00', 'Room 101', 1, 'admin', 'Available'),
+(2, 'Smart TV Samsung', 'ELEC002', 1, 'pcs', '2025-02-15', '2025-08-25 10:00:00', 'AV Room', 1, 'admin', 'Available'),
+(3, 'Office Table', 'FUR001', 2, 'pcs', '2025-03-20', '2025-09-05 14:00:00', 'Room 201', 2, 'admin', 'Available'),
+(4, 'Whiteboard', 'FUR002', 2, 'pcs', '2025-04-02', NULL, 'Room 202', 2, 'staff1', 'Available'),
+(5, 'Basketball', 'SPT001', 3, 'pcs', '2025-05-01', '2025-07-22 16:00:00', 'Gym', 3, 'staff1', 'Available'),
+(6, 'Volleyball Net', 'SPT002', 3, 'pcs', '2025-06-15', NULL, 'Gym', 3, 'staff2', 'Available'),
+(7, 'Bond Paper A4', 'STA001', 4, 'sheets', '2025-07-01', '2025-09-30 11:00:00', 'Storage Room', 4, 'staff2', 'Available'),
+(8, 'Hammer', 'TOO001', 5, 'pcs', '2025-08-10', '2025-10-05 09:30:00', 'Workshop', 5, 'admin', 'Available'),
+(9, 'Screwdriver Set', 'TOO002', 5, 'sets', '2025-09-01', NULL, 'Workshop', 5, 'admin', 'Available'),
+(10, 'Printer Canon LBP', 'ELEC003', 1, 'pcs', '2025-09-15', '2025-10-01 08:45:00', 'Room 103', 1, 'staff1', 'Available');
 
 -- --------------------------------------------------------
 
@@ -316,7 +313,7 @@ ALTER TABLE `incharge`
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `scan_log`
