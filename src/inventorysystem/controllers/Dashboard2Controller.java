@@ -3,8 +3,8 @@ package inventorysystem.controllers;
 import inventorysystem.utils.DatabaseConnection;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
 
 import java.sql.*;
 import java.time.Month;
@@ -12,7 +12,7 @@ import java.time.Month;
 public class Dashboard2Controller {
 
     @FXML
-    private VBox chartContainer;
+    private GridPane chartContainer;
     @FXML
     private Label lblTotalItems, lblLowStock, lblDamaged, lblUnscanned;
 
@@ -24,16 +24,15 @@ public class Dashboard2Controller {
     private void loadDashboard() {
         try (Connection conn = DatabaseConnection.getConnection()) {
             loadCounts(conn);
-            loadCategoryChart(conn);
-            loadMostScannedChart(conn);
-            loadMonthlyAddedChart(conn);
+            loadCategoryChart(conn, 0, 0);   // row 0, col 0
+            loadMostScannedChart(conn, 0, 1); // row 0, col 1
+            loadMonthlyAddedChart(conn, 1, 0, 2); // row 1, col 0, span 2 columns
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    // === ANTIGA: Total per Category ===
-    private void loadCategoryChart(Connection conn) throws SQLException {
+    private void loadCategoryChart(Connection conn, int row, int col) throws SQLException {
         String sql = """
             SELECT c.category_name, COUNT(i.item_id) AS total
             FROM items i
@@ -41,19 +40,24 @@ public class Dashboard2Controller {
             GROUP BY c.category_name
             """;
         XYChart.Series<String, Number> series = new XYChart.Series<>();
-        try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 series.getData().add(new XYChart.Data<>(rs.getString("category_name"), rs.getInt("total")));
             }
         }
-        BarChart<String, Number> barChart = new BarChart<>(new CategoryAxis(), new NumberAxis());
+
+        CategoryAxis xAxis = new CategoryAxis();
+        NumberAxis yAxis = new NumberAxis();
+        BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
         barChart.setTitle("Items per Category");
         barChart.getData().add(series);
-        chartContainer.getChildren().add(barChart);
+        barChart.setPrefSize(500, 300);
+
+        chartContainer.add(barChart, col, row);
     }
 
-    // === ANTIGA (2): Most Scanned this Month ===
-    private void loadMostScannedChart(Connection conn) throws SQLException {
+    private void loadMostScannedChart(Connection conn, int row, int col) throws SQLException {
         String sql = """
             SELECT i.item_name, COUNT(s.scan_id) AS scans
             FROM items i
@@ -64,19 +68,24 @@ public class Dashboard2Controller {
             LIMIT 5
             """;
         XYChart.Series<String, Number> series = new XYChart.Series<>();
-        try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 series.getData().add(new XYChart.Data<>(rs.getString("item_name"), rs.getInt("scans")));
             }
         }
-        BarChart<String, Number> barChart = new BarChart<>(new CategoryAxis(), new NumberAxis());
+
+        CategoryAxis xAxis = new CategoryAxis();
+        NumberAxis yAxis = new NumberAxis();
+        BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
         barChart.setTitle("Top 5 Most Scanned Items (This Month)");
         barChart.getData().add(series);
-        chartContainer.getChildren().add(barChart);
+        barChart.setPrefSize(500, 300);
+
+        chartContainer.add(barChart, col, row);
     }
 
-    // === AMANTE: Items Added per Month ===
-    private void loadMonthlyAddedChart(Connection conn) throws SQLException {
+    private void loadMonthlyAddedChart(Connection conn, int row, int col, int colSpan) throws SQLException {
         String sql = """
             SELECT MONTH(date_acquired) AS month_num, COUNT(*) AS total
             FROM items
@@ -84,19 +93,24 @@ public class Dashboard2Controller {
             GROUP BY MONTH(date_acquired)
             """;
         XYChart.Series<String, Number> series = new XYChart.Series<>();
-        try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int m = rs.getInt("month_num");
                 series.getData().add(new XYChart.Data<>(Month.of(m).name(), rs.getInt("total")));
             }
         }
-        LineChart<String, Number> chart = new LineChart<>(new CategoryAxis(), new NumberAxis());
-        chart.setTitle("Items Added per Month");
-        chart.getData().add(series);
-        chartContainer.getChildren().add(chart);
+
+        CategoryAxis xAxis = new CategoryAxis();
+        NumberAxis yAxis = new NumberAxis();
+        LineChart<String, Number> lineChart = new LineChart<>(xAxis, yAxis);
+        lineChart.setTitle("Items Added per Month");
+        lineChart.getData().add(series);
+        lineChart.setPrefSize(1020, 300);
+
+        chartContainer.add(lineChart, col, row, colSpan, 1);
     }
 
-    // === EBRADO / LAGMAY / ROSETE: Summary Counts ===
     private void loadCounts(Connection conn) throws SQLException {
         lblTotalItems.setText(String.valueOf(count(conn, "SELECT COUNT(*) FROM items")));
         lblLowStock.setText(String.valueOf(count(conn, "SELECT COUNT(*) FROM items WHERE quantity < 5")));
@@ -105,7 +119,8 @@ public class Dashboard2Controller {
     }
 
     private int count(Connection conn, String sql) throws SQLException {
-        try (PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt(1);
             }

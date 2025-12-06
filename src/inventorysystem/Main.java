@@ -17,7 +17,6 @@ public class Main extends Application {
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/inventorysystem/views/login.fxml"));
             Parent root = loader.load();
-
             // Create scene with fixed size
             // Scene size for dashboard 
 //            Scene scene = new Scene(root, 1200, 750);

@@ -1,45 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
-<?import java.net.URL?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0"
-            xmlns="http://javafx.com/javafx/25"
+<ScrollPane xmlns="http://javafx.com/javafx/25"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="inventorysystem.controllers.Dashboard2Controller">
+            fx:controller="inventorysystem.controllers.Dashboard2Controller"
+            fitToWidth="true" fitToHeight="true"
+            hbarPolicy="NEVER" vbarPolicy="AS_NEEDED"
+            styleClass="mainFxmlClass">
 
-    <!-- Link to stylesheet -->
-    <stylesheets>
-        <URL value="@/inventorysystem/assets/styles.css" />
-    </stylesheets>
+    <VBox spacing="30" padding="25">
+        <!-- Stats Row -->
+        <GridPane hgap="20" vgap="20">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="25"/>
+                <ColumnConstraints percentWidth="25"/>
+                <ColumnConstraints percentWidth="25"/>
+                <ColumnConstraints percentWidth="25"/>
+            </columnConstraints>
 
-    <ScrollPane fitToWidth="true" fitToHeight="true"
-                vbarPolicy="AS_NEEDED" hbarPolicy="NEVER"
-                prefWidth="800" prefHeight="600">
+            <!-- Total Items Card -->
+            <VBox styleClass="stat-card" alignment="CENTER" GridPane.columnIndex="0">
+                <Label text="📦 Total Items" styleClass="stat-card-title"/>
+                <Label fx:id="lblTotalItems" text="0" styleClass="stat-card-value"/>
+            </VBox>
 
-        <VBox spacing="25" styleClass="dashboard-container">
-            <padding>
-                <Insets top="25" right="25" bottom="25" left="25"/>
-            </padding>
+            <!-- Low Stock Card -->
+            <VBox styleClass="stat-card" alignment="CENTER" GridPane.columnIndex="1">
+                <Label text="⚠️ Low Stock" styleClass="stat-card-title"/>
+                <Label fx:id="lblLowStock" text="0" styleClass="stat-card-value"/>
+            </VBox>
 
-            <!-- Header / Stats Row -->
-            <HBox spacing="30" alignment="CENTER_LEFT">
-                <Label text="📦 Total Items:" styleClass="stats-label"/>
-                <Label fx:id="lblTotalItems" styleClass="stats-value"/>
-                <Label text="⚠️ Low Stock:" styleClass="stats-label"/>
-                <Label fx:id="lblLowStock" styleClass="stats-value"/>
-                <Label text="💥 Damaged/Disposed:" styleClass="stats-label"/>
-                <Label fx:id="lblDamaged" styleClass="stats-value"/>
-                <Label text="🕓 Unscanned:" styleClass="stats-label"/>
-                <Label fx:id="lblUnscanned" styleClass="stats-value"/>
-            </HBox>
+            <!-- Damaged Card -->
+            <VBox styleClass="stat-card" alignment="CENTER" GridPane.columnIndex="2">
+                <Label text="💥 Damaged/Disposed" styleClass="stat-card-title"/>
+                <Label fx:id="lblDamaged" text="0" styleClass="stat-card-value"/>
+            </VBox>
 
+            <!-- Unscanned Card -->
+            <VBox styleClass="stat-card" alignment="CENTER" GridPane.columnIndex="3">
+                <Label text="🕓 Unscanned" styleClass="stat-card-title"/>
+                <Label fx:id="lblUnscanned" text="0" styleClass="stat-card-value"/>
+            </VBox>
+        </GridPane>
 
-            <!-- Charts Section -->
-            <VBox fx:id="chartContainer" spacing="40" styleClass="chart-section"/>
-        </VBox>
-
-    </ScrollPane>
-</AnchorPane>
+        <!-- Charts Grid -->
+        <GridPane fx:id="chartContainer" hgap="30" vgap="30">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="50"/>
+                <ColumnConstraints percentWidth="50"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints percentHeight="50"/>
+                <RowConstraints percentHeight="50"/>
+            </rowConstraints>
+        </GridPane>
+    </VBox>
+</ScrollPane>
