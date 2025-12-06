@@ -3,7 +3,6 @@ package inventorysystem.controllers;
 import inventorysystem.dao.CategoryDAO;
 import inventorysystem.dao.ItemDAO;
 import inventorysystem.models.Item;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -23,23 +23,20 @@ import java.util.Map;
 
 public class ItemController {
 
-    @FXML
-    private TableView<Item> itemTable;
-    @FXML
-    private TableColumn<Item, String> colItemName, colBarcode, colCategory, colUnit, colDateAcquired, colLastScanned, colServiceability, colAvailability, colInCharge;
-    @FXML
-    private TableColumn<Item, Integer> colQuantity;
-    @FXML
-    private TextField searchField;
-    @FXML
-    private ComboBox<String> filterCategoryComboBox, filterStatusComboBox;
-    @FXML
-    private Button addButton, updateButton, deleteButton, clearFilterButton;
+    @FXML private TableView<Item> itemTable;
+    @FXML private TableColumn<Item, String> colItemName, colBarcode, colCategory, colUnit,
+            colDateAcquired, colLastScanned, colStatus, colInCharge;
+
+    @FXML private TextField searchField;
+    @FXML private ComboBox<String> filterCategoryComboBox, filterStatusComboBox;
+    @FXML private Button addButton, updateButton, deleteButton, clearFilterButton;
 
     private final ItemDAO itemDAO = new ItemDAO();
     private final CategoryDAO categoryDAO = new CategoryDAO();
+
     private ObservableList<Item> masterData = FXCollections.observableArrayList();
     private FilteredList<Item> filteredData;
+
     private ObservableList<String> categoriesList;
     private Map<String, Integer> categoryMap;
 
@@ -56,32 +53,36 @@ public class ItemController {
     private void setupTableColumns() {
         colItemName.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getItemName()));
         colBarcode.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getBarcode()));
-        colQuantity.setCellValueFactory(cd -> new SimpleIntegerProperty(cd.getValue().getQuantity()).asObject());
         colUnit.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getUnit()));
-        colServiceability.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getServiceabilityStatus()));
-        colAvailability.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getAvailabilityStatus()));
+
+        colStatus.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getStatus()));
+
         colInCharge.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getInChargeName()));
+
+        colCategory.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getCategoryName()));
 
         colDateAcquired.setCellValueFactory(cd -> {
             LocalDate date = cd.getValue().getDateAcquired();
-            String formatted = (date != null) ? date.format(displayFormatter) : "—";
+            String formatted = date != null ? date.format(displayFormatter) : "—";
             return new SimpleStringProperty(formatted);
         });
+
         colLastScanned.setCellValueFactory(cd -> {
             LocalDate date = cd.getValue().getLastScanned();
-            String formatted = (date != null) ? date.format(displayFormatter) : "—";
+            String formatted = date != null ? date.format(displayFormatter) : "—";
             return new SimpleStringProperty(formatted);
         });
-        colCategory.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getCategoryName()));
     }
 
     private void loadCategories() {
         categoriesList = FXCollections.observableArrayList();
         categoryMap = new HashMap<>();
+
         categoryDAO.getAllCategories().forEach(cat -> {
             categoriesList.add(cat.getCategoryName());
             categoryMap.put(cat.getCategoryName(), cat.getCategoryId());
         });
+
         filterCategoryComboBox.setItems(categoriesList);
     }
 
@@ -95,11 +96,13 @@ public class ItemController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/inventorysystem/views/add_item.fxml"));
             Parent root = loader.load();
+
             Stage stage = new Stage();
             stage.setTitle("Add New Item");
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
+
             loadItems();
         } catch (IOException e) {
             showAlert("Error", "Failed to open Add Item form.", e.getMessage());
@@ -109,8 +112,9 @@ public class ItemController {
     @FXML
     private void handleUpdate() {
         Item selected = itemTable.getSelectionModel().getSelectedItem();
+
         if (selected == null) {
-            showAlert("Warning", "No item selected", "Please select an item to update.");
+            showAlert("Warning", "No item selected", "Select an item to update.");
             return;
         }
 
@@ -119,17 +123,15 @@ public class ItemController {
             Parent root = loader.load();
 
             UpdateItemController controller = loader.getController();
+
             controller.setItemData(
                     selected.getItemId(),
                     selected.getItemName(),
                     selected.getBarcode(),
                     selected.getCategoryName(),
-                    selected.getQuantity(),
                     selected.getUnit(),
                     selected.getDateAcquired(),
-                    selected.getServiceabilityStatus(),
-                    selected.getConditionStatus(),
-                    selected.getAvailabilityStatus(),
+                    selected.getStatus(),  // NEW
                     selected.getStorageLocation(),
                     selected.getInChargeName(),
                     selected.getAddedBy()
@@ -141,7 +143,7 @@ public class ItemController {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
 
-            loadItems(); // refresh table after update
+            loadItems();
         } catch (Exception e) {
             showAlert("Error", "Failed to open Update Item form.", e.getMessage());
         }
@@ -150,6 +152,7 @@ public class ItemController {
     @FXML
     private void handleDelete() {
         Item selected = itemTable.getSelectionModel().getSelectedItem();
+
         if (selected == null) {
             showAlert("Warning", "No Selection", "Please select an item to delete.");
             return;
@@ -174,48 +177,39 @@ public class ItemController {
 
     private void setupFiltering() {
         filteredData = new FilteredList<>(masterData, p -> true);
-        filterStatusComboBox.setItems(FXCollections.observableArrayList("Available", "Unavailable"));
 
-        searchField.textProperty().addListener((obs, oldVal, newVal) -> applyFilters());
-        filterCategoryComboBox.valueProperty().addListener((obs, oldVal, newVal) -> applyFilters());
-        filterStatusComboBox.valueProperty().addListener((obs, oldVal, newVal) -> applyFilters());
+        filterStatusComboBox.setItems(FXCollections.observableArrayList(
+                "Available", "Damaged", "Borrowed", "Missing", "Disposed"
+        ));
+
+        searchField.textProperty().addListener((obs, o, n) -> applyFilters());
+        filterCategoryComboBox.valueProperty().addListener((obs, o, n) -> applyFilters());
+        filterStatusComboBox.valueProperty().addListener((obs, o, n) -> applyFilters());
 
         itemTable.setItems(filteredData);
     }
 
     private void applyFilters() {
-        String search = searchField.getText() == null ? "" : searchField.getText().toLowerCase();
+        String search = safe(searchField.getText()).toLowerCase();
         String category = filterCategoryComboBox.getValue();
         String status = filterStatusComboBox.getValue();
 
         filteredData.setPredicate(item -> {
-            if (item == null) {
-                return false;
-            }
+            if (item == null) return false;
 
-            // Combine all relevant searchable fields
             String combined = String.join(" ",
                     safe(item.getItemName()),
                     safe(item.getBarcode()),
                     safe(item.getCategoryName()),
-                    safe(item.getAvailabilityStatus()),
-                    safe(item.getServiceabilityStatus()),
-                    safe(item.getConditionStatus()),
+                    safe(item.getStatus()),
                     safe(item.getStorageLocation()),
                     safe(item.getInChargeName()),
                     safe(item.getAddedBy())
             ).toLowerCase();
 
-            // Search matches anywhere in the combined string
             boolean matchesSearch = search.isEmpty() || combined.contains(search);
-
-            // Category filter: exact match if selected
-            boolean matchesCategory = category == null || category.isEmpty()
-                    || safe(item.getCategoryName()).equalsIgnoreCase(category);
-
-            // Status filter: allow partial match (e.g., typing "avail" matches "Available")
-            boolean matchesStatus = status == null || status.isEmpty()
-                    || safe(item.getAvailabilityStatus()).toLowerCase().contains(status.toLowerCase());
+            boolean matchesCategory = category == null || category.equalsIgnoreCase(item.getCategoryName());
+            boolean matchesStatus = status == null || status.equalsIgnoreCase(item.getStatus());
 
             return matchesSearch && matchesCategory && matchesStatus;
         });
@@ -229,22 +223,19 @@ public class ItemController {
         applyFilters();
     }
 
-    private String safe(String value) {
-        return value == null ? "" : value;
+    private String safe(String s) {
+        return s == null ? "" : s;
     }
 
     private void showAlert(String title, String header, String content) {
-        Alert.AlertType alertType = switch (title.toLowerCase()) {
-            case "error" ->
-                Alert.AlertType.ERROR;
-            case "warning" ->
-                Alert.AlertType.WARNING;
-            case "success", "info" ->
-                Alert.AlertType.INFORMATION;
-            default ->
-                Alert.AlertType.NONE;
+        Alert.AlertType type = switch (title.toLowerCase()) {
+            case "error" -> Alert.AlertType.ERROR;
+            case "warning" -> Alert.AlertType.WARNING;
+            case "success", "info" -> Alert.AlertType.INFORMATION;
+            default -> Alert.AlertType.NONE;
         };
-        Alert alert = new Alert(alertType);
+
+        Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);

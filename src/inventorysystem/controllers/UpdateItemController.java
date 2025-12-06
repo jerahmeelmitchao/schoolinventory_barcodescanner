@@ -17,12 +17,9 @@ public class UpdateItemController {
     @FXML private TextField itemNameField;
     @FXML private TextField barcodeField;
     @FXML private ComboBox<String> categoryComboBox;
-    @FXML private TextField quantityField;
+    @FXML private ComboBox<String> statusComboBox;  // NEW
     @FXML private TextField unitField;
     @FXML private DatePicker dateAcquiredPicker;
-    @FXML private ComboBox<String> serviceabilityComboBox;
-    @FXML private ComboBox<String> conditionComboBox;
-    @FXML private ComboBox<String> availabilityComboBox;
     @FXML private TextField locationField;
     @FXML private ComboBox<String> inChargeComboBox;
     @FXML private TextField addedByField;
@@ -41,20 +38,17 @@ public class UpdateItemController {
         setupDropdownOptions();
     }
 
-    public void setItemData(int itemId, String itemName, String barcode, String category, int quantity, String unit,
-                            LocalDate dateAcquired, String serviceability, String condition, String availability,
+    public void setItemData(int itemId, String itemName, String barcode, String category,
+                            String unit, LocalDate dateAcquired, String status,
                             String location, String inCharge, String addedBy) {
 
         this.itemId = itemId;
         itemNameField.setText(itemName);
         barcodeField.setText(barcode);
         categoryComboBox.setValue(category);
-        quantityField.setText(String.valueOf(quantity));
         unitField.setText(unit);
         dateAcquiredPicker.setValue(dateAcquired);
-        serviceabilityComboBox.setValue(serviceability);
-        conditionComboBox.setValue(condition);
-        availabilityComboBox.setValue(availability);
+        statusComboBox.setValue(status);
         locationField.setText(location);
         inChargeComboBox.setValue(inCharge);
         addedByField.setText(addedBy);
@@ -62,9 +56,13 @@ public class UpdateItemController {
 
     private void loadCategories() {
         String sql = "SELECT category_name FROM categories ORDER BY category_name ASC";
-        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
             while (rs.next()) categories.add(rs.getString("category_name"));
             categoryComboBox.setItems(categories);
+
         } catch (SQLException e) {
             showError("Database Error", "Unable to load categories.", e.getMessage());
         }
@@ -72,9 +70,13 @@ public class UpdateItemController {
 
     private void loadInChargeList() {
         String sql = "SELECT incharge_id, incharge_name FROM incharge ORDER BY incharge_name ASC";
-        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
             inCharges.clear();
             inChargeMap.clear();
+
             while (rs.next()) {
                 int id = rs.getInt("incharge_id");
                 String name = rs.getString("incharge_name");
@@ -82,15 +84,16 @@ public class UpdateItemController {
                 inChargeMap.put(name, id);
             }
             inChargeComboBox.setItems(inCharges);
+
         } catch (SQLException e) {
             showError("Database Error", "Unable to load In-Charge list.", e.getMessage());
         }
     }
 
     private void setupDropdownOptions() {
-        serviceabilityComboBox.setItems(FXCollections.observableArrayList("Serviceable", "Unserviceable"));
-        conditionComboBox.setItems(FXCollections.observableArrayList("OK", "Damaged", "Disposed"));
-        availabilityComboBox.setItems(FXCollections.observableArrayList("Available", "Unavailable"));
+        statusComboBox.setItems(FXCollections.observableArrayList(
+                "Available", "Damaged", "Borrowed", "Missing", "Disposed"
+        ));
     }
 
     @FXML
@@ -99,32 +102,31 @@ public class UpdateItemController {
 
         String sql = """
             UPDATE items SET
-                item_name = ?, barcode = ?, category_id = ?, quantity = ?, unit = ?, date_acquired = ?,
-                serviceability_status = ?, condition_status = ?, availability_status = ?, storage_location = ?,
-                incharge_id = ?, added_by = ?
+                item_name = ?, barcode = ?, category_id = ?, unit = ?, date_acquired = ?,
+                status = ?, storage_location = ?, incharge_id = ?, added_by = ?
             WHERE item_id = ?
         """;
 
-        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setString(1, itemNameField.getText().trim());
             ps.setString(2, barcodeField.getText().trim());
             ps.setInt(3, getCategoryId(categoryComboBox.getValue()));
-            ps.setInt(4, Integer.parseInt(quantityField.getText().trim()));
-            ps.setString(5, unitField.getText().trim());
-            ps.setDate(6, Date.valueOf(dateAcquiredPicker.getValue()));
-            ps.setString(7, serviceabilityComboBox.getValue());
-            ps.setString(8, conditionComboBox.getValue());
-            ps.setString(9, availabilityComboBox.getValue());
-            ps.setString(10, locationField.getText().trim());
-            ps.setInt(11, inChargeMap.get(inChargeComboBox.getValue()));
-            ps.setString(12, addedByField.getText().trim());
-            ps.setInt(13, itemId);
+            ps.setString(4, unitField.getText().trim());
+            ps.setDate(5, Date.valueOf(dateAcquiredPicker.getValue()));
+            ps.setString(6, statusComboBox.getValue());
+            ps.setString(7, locationField.getText().trim());
+            ps.setInt(8, inChargeMap.get(inChargeComboBox.getValue()));
+            ps.setString(9, addedByField.getText().trim());
+            ps.setInt(10, itemId);
 
             int rows = ps.executeUpdate();
             if (rows > 0) {
                 showInfo("Success", "Item successfully updated!");
                 closeWindow();
             }
+
         } catch (SQLException e) {
             showError("Database Error", "Failed to update item.", e.getMessage());
         }
@@ -142,23 +144,23 @@ public class UpdateItemController {
 
     private Integer getCategoryId(String categoryName) {
         String sql = "SELECT category_id FROM categories WHERE category_name = ?";
-        try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setString(1, categoryName);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) return rs.getInt("category_id");
+
         } catch (SQLException e) { e.printStackTrace(); }
+
         return null;
     }
 
     private boolean validateInputs() {
-        if (itemNameField.getText().isEmpty() || barcodeField.getText().isEmpty() || categoryComboBox.getValue() == null
-            || quantityField.getText().isEmpty() || unitField.getText().isEmpty() || dateAcquiredPicker.getValue() == null
-            || serviceabilityComboBox.getValue() == null || conditionComboBox.getValue() == null
-            || availabilityComboBox.getValue() == null || inChargeComboBox.getValue() == null || locationField.getText().isEmpty()) {
-            showError("Missing Fields", "Please fill in all required fields.", null);
-            return false;
-        }
-        return true;
+        return !(itemNameField.getText().isEmpty() || barcodeField.getText().isEmpty()
+                || categoryComboBox.getValue() == null || unitField.getText().isEmpty()
+                || dateAcquiredPicker.getValue() == null || statusComboBox.getValue() == null
+                || inChargeComboBox.getValue() == null || locationField.getText().isEmpty());
     }
 
     private void showError(String title, String header, String message) {

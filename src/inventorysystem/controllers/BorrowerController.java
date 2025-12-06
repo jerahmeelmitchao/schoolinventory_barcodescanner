@@ -16,38 +16,24 @@ import javafx.scene.layout.VBox;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class BorrowerController {
 
-    @FXML
-    private TableView<Borrower> borrowerTable;
-    @FXML
-    private TableColumn<Borrower, Integer> colId;
-    @FXML
-    private TableColumn<Borrower, String> colName;
-    @FXML
-    private TableColumn<Borrower, String> colPosition;
-    @FXML
-    private TableColumn<Borrower, String> colType;
-    @FXML
-    private TableColumn<Borrower, Void> colActions;
+    @FXML private TableView<Borrower> borrowerTable;
+    @FXML private TableColumn<Borrower, Integer> colId;
+    @FXML private TableColumn<Borrower, String> colName;
+    @FXML private TableColumn<Borrower, String> colPosition;
+    @FXML private TableColumn<Borrower, String> colType;
+    @FXML private TableColumn<Borrower, Void> colActions;
 
-    @FXML
-    private TextField nameField;
-    @FXML
-    private TextField positionField;
-    @FXML
-    private ComboBox<String> typeComboBox;
+    @FXML private TextField nameField;
+    @FXML private TextField positionField;
+    @FXML private ComboBox<String> typeComboBox;
 
-    @FXML
-    private Button addButton;
-    @FXML
-    private Button updateButton;
-    @FXML
-    private Button deleteButton;
-    @FXML
-    private Button cancelButton;
+    @FXML private Button addButton;
+    @FXML private Button updateButton;
+    @FXML private Button deleteButton;
+    @FXML private Button cancelButton;
 
     private final BorrowerDAO borrowerDAO = new BorrowerDAO();
     private final BorrowRecordDAO borrowRecordDAO = new BorrowRecordDAO();
@@ -74,15 +60,8 @@ public class BorrowerController {
             private final HBox box = new HBox(10, borrowBtn, returnBtn);
 
             {
-                borrowBtn.setOnAction(e -> {
-                    Borrower borrower = getTableView().getItems().get(getIndex());
-                    openBorrowPanel(borrower);
-                });
-
-                returnBtn.setOnAction(e -> {
-                    Borrower borrower = getTableView().getItems().get(getIndex());
-                    openReturnPanel(borrower);
-                });
+                borrowBtn.setOnAction(e -> openBorrowPanel(getTableView().getItems().get(getIndex())));
+                returnBtn.setOnAction(e -> openReturnPanel(getTableView().getItems().get(getIndex())));
             }
 
             @Override
@@ -92,11 +71,9 @@ public class BorrowerController {
                     setGraphic(null);
                 } else {
                     Borrower borrower = getTableView().getItems().get(getIndex());
-                    boolean hasBorrowed = !borrowRecordDAO.getBorrowRecordsByBorrower(borrower.getBorrowerId())
+                    boolean hasBorrowed = borrowRecordDAO.getBorrowRecordsByBorrower(borrower.getBorrowerId())
                             .stream()
-                            .filter(r -> r.getStatus().equals("Borrowed"))
-                            .toList()
-                            .isEmpty();
+                            .anyMatch(r -> r.getStatus().equals("Borrowed"));
 
                     returnBtn.setDisable(!hasBorrowed);
                     setGraphic(box);
@@ -161,9 +138,7 @@ public class BorrowerController {
 
     @FXML
     private void handleUpdate() {
-        if (selectedBorrower == null) {
-            return;
-        }
+        if (selectedBorrower == null) return;
 
         selectedBorrower.setBorrowerName(nameField.getText());
         selectedBorrower.setPosition(positionField.getText());
@@ -177,9 +152,7 @@ public class BorrowerController {
 
     @FXML
     private void handleDelete() {
-        if (selectedBorrower == null) {
-            return;
-        }
+        if (selectedBorrower == null) return;
 
         if (borrowerDAO.deleteBorrower(selectedBorrower.getBorrowerId())) {
             borrowerList.remove(selectedBorrower);
@@ -213,18 +186,15 @@ public class BorrowerController {
         ObservableList<Item> allItems = FXCollections.observableArrayList(itemDAO.getAllItems());
         itemListView.setItems(allItems);
 
-// Add this to display names instead of object references
-        itemListView.setCellFactory(lv -> new ListCell<Item>() {
+        itemListView.setCellFactory(lv -> new ListCell<>() {
             @Override
             protected void updateItem(Item item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || item == null ? null : item.getItemName());
+                setText(empty || item == null ? null : item.getItemName() + " (" + item.getStatus() + ")");
             }
         });
 
-        Spinner<Integer> qtySpinner = new Spinner<>(1, 100, 1);
-
-        VBox content = new VBox(10, searchField, itemListView, new Label("Quantity:"), qtySpinner);
+        VBox content = new VBox(10, searchField, itemListView);
         dialog.getDialogPane().setContent(content);
 
         ButtonType saveBtn = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
@@ -234,21 +204,22 @@ public class BorrowerController {
             if (bt == saveBtn) {
                 Item selected = itemListView.getSelectionModel().getSelectedItem();
                 if (selected != null) {
-                    int qty = qtySpinner.getValue();
-                    if (itemDAO.decreaseQuantity(selected.getItemId(), qty)) {
+                    if (selected.getStatus().equals("Available")) {
+                        selected.setStatus("Borrowed");
+                        itemDAO.updateItemStatus(selected.getItemId(), "Borrowed");
+
                         BorrowRecord record = new BorrowRecord(
                                 0,
                                 selected.getItemId(),
                                 borrower.getBorrowerId(),
                                 LocalDate.now(),
                                 null,
-                                qty,
                                 "Borrowed"
                         );
                         borrowRecordDAO.addBorrowRecord(record);
                         new Alert(Alert.AlertType.INFORMATION, "Item borrowed successfully!").showAndWait();
                     } else {
-                        new Alert(Alert.AlertType.ERROR, "Not enough stock!").showAndWait();
+                        new Alert(Alert.AlertType.ERROR, "Item is not available!").showAndWait();
                     }
                 }
             }
@@ -260,7 +231,6 @@ public class BorrowerController {
     }
 
     // Return panel
-    // Return panel
     private void openReturnPanel(Borrower borrower) {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Return Item");
@@ -270,23 +240,21 @@ public class BorrowerController {
 
         ListView<BorrowRecord> recordListView = new ListView<>(FXCollections.observableArrayList(active));
 
-        // Display readable borrow record info
-        recordListView.setCellFactory(lv -> new ListCell<BorrowRecord>() {
+        recordListView.setCellFactory(lv -> new ListCell<>() {
             @Override
             protected void updateItem(BorrowRecord record, boolean empty) {
                 super.updateItem(record, empty);
                 if (empty || record == null) {
                     setText(null);
                 } else {
-                    setText("Item ID: " + record.getItemId()
-                            + ", Qty: " + record.getQuantityBorrowed()
-                            + ", Status: " + record.getStatus());
+                    setText("Item ID: " + record.getItemId() + ", Status: " + record.getStatus() +
+                            ", Borrowed: " + record.getBorrowDate());
                 }
             }
         });
 
         TextArea remarksArea = new TextArea();
-        remarksArea.setPromptText("Remarks...");
+        remarksArea.setPromptText("Remarks (optional, e.g., Damaged)...");
 
         VBox content = new VBox(10, recordListView, new Label("Remarks:"), remarksArea);
         dialog.getDialogPane().setContent(content);
@@ -299,7 +267,10 @@ public class BorrowerController {
                 BorrowRecord selected = recordListView.getSelectionModel().getSelectedItem();
                 if (selected != null) {
                     borrowRecordDAO.returnBorrowRecord(selected.getRecordId(), LocalDate.now(), remarksArea.getText());
-                    itemDAO.increaseQuantity(selected.getItemId(), selected.getQuantityBorrowed());
+
+                    String newStatus = remarksArea.getText().toLowerCase().contains("damaged") ? "Damaged" : "Available";
+                    itemDAO.updateItemStatus(selected.getItemId(), newStatus);
+
                     new Alert(Alert.AlertType.INFORMATION, "Item returned successfully!").showAndWait();
                 }
             }
@@ -321,7 +292,6 @@ public class BorrowerController {
 
         for (BorrowRecord r : records) {
             sb.append("Item ID: ").append(r.getItemId())
-                    .append(", Qty: ").append(r.getQuantityBorrowed())
                     .append(", Status: ").append(r.getStatus())
                     .append(", Borrowed: ").append(r.getBorrowDate())
                     .append(", Returned: ").append(r.getReturnDate() != null ? r.getReturnDate() : "-")

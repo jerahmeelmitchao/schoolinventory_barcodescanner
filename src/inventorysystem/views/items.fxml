@@ -17,24 +17,31 @@
 
     <children>
         <VBox spacing="15" prefWidth="950" prefHeight="720">
-            <padding>
-                <Insets top="15" right="20" bottom="15" left="20" />
-            </padding>
+            <padding><Insets top="15" right="20" bottom="15" left="20" /></padding>
 
             <!-- Title -->
             <Label text="Inventory Items" styleClass="title-label">
-                <font>
-                    <Font name="System Bold" size="24.0" />
-                </font>
+                <font><Font name="System Bold" size="24.0" /></font>
             </Label>
 
             <!-- Filter Bar -->
             <HBox spacing="10" alignment="CENTER_LEFT">
-                <TextField fx:id="searchField" promptText="🔍 Search by name, barcode, or category..." prefWidth="300" />
-                <ComboBox fx:id="filterCategoryComboBox" promptText="Filter by Category" prefWidth="200" />
-                <ComboBox fx:id="filterStatusComboBox" promptText="Filter by Availability" prefWidth="200" />
-                <Button fx:id="clearFilterButton" text="Clear Filters" styleClass="neutral-btn"
-                        prefWidth="100" maxHeight="35" onAction="#handleClearFilters" />
+                <TextField fx:id="searchField" 
+                           promptText="🔍 Search by name, barcode, or category..." 
+                           prefWidth="300" />
+
+                <ComboBox fx:id="filterCategoryComboBox" 
+                          promptText="Filter by Category" 
+                          prefWidth="200" />
+
+                <ComboBox fx:id="filterStatusComboBox" 
+                          promptText="Filter by Status" 
+                          prefWidth="200" />
+
+                <Button fx:id="clearFilterButton" text="Clear Filters" 
+                        styleClass="neutral-btn"
+                        prefWidth="100" maxHeight="35" 
+                        onAction="#handleClearFilters" />
             </HBox>
 
             <!-- Action Buttons -->
@@ -44,19 +51,17 @@
                 <Button fx:id="deleteButton" text="Delete Item" onAction="#handleDelete" styleClass="danger-btn" />
             </HBox>
 
-            <!-- Table Section -->
+            <!-- Table -->
             <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color:transparent;">
                 <TableView fx:id="itemTable" prefHeight="600" prefWidth="900">
                     <columns>
                         <TableColumn fx:id="colItemName" prefWidth="150" text="Item Name" />
                         <TableColumn fx:id="colBarcode" prefWidth="120" text="Barcode" />
                         <TableColumn fx:id="colCategory" prefWidth="120" text="Category" />
-                        <TableColumn fx:id="colQuantity" prefWidth="70" text="Qty" />
-                        <TableColumn fx:id="colUnit" prefWidth="70" text="Unit" />
+                        <TableColumn fx:id="colUnit" prefWidth="80" text="Unit" />
+                        <TableColumn fx:id="colStatus" prefWidth="120" text="Status" />
                         <TableColumn fx:id="colDateAcquired" prefWidth="120" text="Date Acquired" />
-                        <TableColumn fx:id="colLastScanned" prefWidth="120" text="Last Scanned" />
-                        <TableColumn fx:id="colServiceability" prefWidth="120" text="Serviceability" />
-                        <TableColumn fx:id="colAvailability" prefWidth="100" text="Availability" />
+                        <TableColumn fx:id="colLastScanned" prefWidth="130" text="Last Scanned" />
                         <TableColumn fx:id="colInCharge" prefWidth="130" text="In-Charge" />
                     </columns>
                 </TableView>

@@ -83,6 +83,7 @@ public class LoginController implements Initializable {
                 e.printStackTrace();
             }
         } else {
+            showAlert("Access Denied", "Invalid username or password.");
             System.out.println("Invalid username or password.");
         }
     }

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package inventorysystem.models;
 
 import java.time.LocalDate;
@@ -12,19 +8,17 @@ public class BorrowRecord {
     private int borrowerId;
     private LocalDate borrowDate;
     private LocalDate returnDate;
-    private int quantityBorrowed;
     private String status; // e.g. "Borrowed", "Returned"
 
     public BorrowRecord() {}
 
-    public BorrowRecord(int recordId, int itemId, int borrowerId, LocalDate borrowDate,
-                        LocalDate returnDate, int quantityBorrowed, String status) {
+    public BorrowRecord(int recordId, int itemId, int borrowerId,
+                        LocalDate borrowDate, LocalDate returnDate, String status) {
         this.recordId = recordId;
         this.itemId = itemId;
         this.borrowerId = borrowerId;
         this.borrowDate = borrowDate;
         this.returnDate = returnDate;
-        this.quantityBorrowed = quantityBorrowed;
         this.status = status;
     }
 
@@ -68,14 +62,6 @@ public class BorrowRecord {
         this.returnDate = returnDate;
     }
 
-    public int getQuantityBorrowed() {
-        return quantityBorrowed;
-    }
-
-    public void setQuantityBorrowed(int quantityBorrowed) {
-        this.quantityBorrowed = quantityBorrowed;
-    }
-
     public String getStatus() {
         return status;
     }
@@ -86,6 +72,6 @@ public class BorrowRecord {
 
     @Override
     public String toString() {
-        return "Record #" + recordId + " - ItemID: " + itemId + " BorrowerID: " + borrowerId;
+        return "Record #" + recordId + " - ItemID: " + itemId + " BorrowerID: " + borrowerId + " Status: " + status;
     }
 }
