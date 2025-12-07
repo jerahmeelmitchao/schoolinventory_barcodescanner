@@ -80,6 +80,8 @@ public class LoginController implements Initializable {
                 // Create new scene with different size
                 Scene dashboardScene = new Scene(dashboardRoot, 1200, 750);
                 dashboardScene.getStylesheets().add(getClass().getResource("/inventorysystem/assets/styles.css").toExternalForm());
+                ItemController.setLoggedUsername(user.getUsername());
+                ItemController.setLoggedUserNames(user.getFirstName(), user.getLastName());
 
                 // Set scene & allow resizing
                 stage.setScene(dashboardScene);
