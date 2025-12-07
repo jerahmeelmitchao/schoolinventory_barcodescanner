@@ -249,3 +249,16 @@
 .sidebar-btn:hover {
     -fx-background-color: #2980b9;
 }
+.export-btn {
+    -fx-background-color: #8e44ad;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 8 15 8 15;
+}
+.export-btn:hover {
+    -fx-background-color: #732d91;
+}
+.emoji {
+    -fx-font-family: "Segoe UI Emoji";
+}

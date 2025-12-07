@@ -23,13 +23,18 @@ import java.util.Map;
 
 public class ItemController {
 
-    @FXML private TableView<Item> itemTable;
-    @FXML private TableColumn<Item, String> colItemName, colBarcode, colCategory, colUnit,
+    @FXML
+    private TableView<Item> itemTable;
+    @FXML
+    private TableColumn<Item, String> colItemName, colBarcode, colCategory, colUnit,
             colDateAcquired, colLastScanned, colStatus, colInCharge;
 
-    @FXML private TextField searchField;
-    @FXML private ComboBox<String> filterCategoryComboBox, filterStatusComboBox;
-    @FXML private Button addButton, updateButton, deleteButton, clearFilterButton;
+    @FXML
+    private TextField searchField;
+    @FXML
+    private ComboBox<String> filterCategoryComboBox, filterStatusComboBox;
+    @FXML
+    private Button addButton, updateButton, deleteButton, clearFilterButton;
 
     private final ItemDAO itemDAO = new ItemDAO();
     private final CategoryDAO categoryDAO = new CategoryDAO();
@@ -131,7 +136,7 @@ public class ItemController {
                     selected.getCategoryName(),
                     selected.getUnit(),
                     selected.getDateAcquired(),
-                    selected.getStatus(),  // NEW
+                    selected.getStatus(), // NEW
                     selected.getStorageLocation(),
                     selected.getInChargeName(),
                     selected.getAddedBy()
@@ -195,7 +200,9 @@ public class ItemController {
         String status = filterStatusComboBox.getValue();
 
         filteredData.setPredicate(item -> {
-            if (item == null) return false;
+            if (item == null) {
+                return false;
+            }
 
             String combined = String.join(" ",
                     safe(item.getItemName()),
@@ -229,10 +236,14 @@ public class ItemController {
 
     private void showAlert(String title, String header, String content) {
         Alert.AlertType type = switch (title.toLowerCase()) {
-            case "error" -> Alert.AlertType.ERROR;
-            case "warning" -> Alert.AlertType.WARNING;
-            case "success", "info" -> Alert.AlertType.INFORMATION;
-            default -> Alert.AlertType.NONE;
+            case "error" ->
+                Alert.AlertType.ERROR;
+            case "warning" ->
+                Alert.AlertType.WARNING;
+            case "success", "info" ->
+                Alert.AlertType.INFORMATION;
+            default ->
+                Alert.AlertType.NONE;
         };
 
         Alert alert = new Alert(type);
@@ -241,4 +252,18 @@ public class ItemController {
         alert.setContentText(content);
         alert.showAndWait();
     }
+    @FXML
+    private Button exportButton;
+
+    @FXML
+    private void handleExport() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Export");
+        alert.setHeaderText("Exporting Items");
+        alert.setContentText("Export functionality coming soon!");
+        alert.showAndWait();
+
+        // TODO: Add Excel / CSV export code here
+    }
+
 }
