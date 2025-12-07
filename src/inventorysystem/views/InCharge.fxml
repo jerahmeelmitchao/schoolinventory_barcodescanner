@@ -2,17 +2,13 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.layout.ColumnConstraints?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/22"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -23,59 +19,36 @@
     <children>
         <VBox spacing="15" AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0"
               AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0">
+
             <padding>
                 <Insets top="15" right="20" bottom="15" left="20"/>
             </padding>
 
             <!-- Title -->
-            <Label text="Manage Incharges" styleClass="title-label">
+            <Label text="Manage In-Charge" styleClass="title-label">
                 <font>
                     <Font name="System Bold" size="24"/>
                 </font>
             </Label>
 
-            <!-- Input Grid -->
-            <GridPane hgap="15" vgap="12">
-                <columnConstraints>
-                    <ColumnConstraints minWidth="150" prefWidth="180" />
-                    <ColumnConstraints minWidth="200" prefWidth="250" />
-                </columnConstraints>
-
-                <children>
-                    <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                    <TextField fx:id="nameField" promptText="Enter name" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-
-                    <Label text="Position:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                    <TextField fx:id="positionField" promptText="Enter position" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-
-                    <Label text="Contact Info:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                    <TextField fx:id="contactField" promptText="Enter contact info" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-
-                    <Label text="Category:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                    <ComboBox fx:id="categoryComboBox" promptText="Select category" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                </children>
-            </GridPane>
-
             <!-- Buttons -->
             <HBox spacing="10">
-                <children>
-                    <Button fx:id="addButton" text="Add" styleClass="primary-btn" onAction="#handleAdd"/>
-                    <Button fx:id="updateButton" text="Update" styleClass="secondary-btn" onAction="#handleUpdate" disable="true"/>
-                    <Button fx:id="deleteButton" text="Delete" styleClass="danger-btn" onAction="#handleDelete" disable="true"/>
-                    <Button fx:id="cancelButton" text="Cancel" styleClass="danger-btn" onAction="#handleCancel" visible="false"/>
-                </children>
+                <Button fx:id="addButton" text="Add New" styleClass="primary-btn" onAction="#openAddPopup"/>
+                <Button fx:id="editButton" text="Edit" styleClass="secondary-btn" onAction="#openEditPopup" disable="true"/>
+                <Button fx:id="deleteButton" text="Delete" styleClass="danger-btn" onAction="#handleDelete" disable="true"/>
             </HBox>
 
             <!-- Table -->
-            <TableView fx:id="inchargeTable" prefHeight="400">
+            <TableView fx:id="inchargeTable" prefHeight="500">
                 <columns>
-                    <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
+                    <TableColumn fx:id="colId" text="ID" prefWidth="60"/>
                     <TableColumn fx:id="colName" text="Name" prefWidth="180"/>
                     <TableColumn fx:id="colPosition" text="Position" prefWidth="150"/>
                     <TableColumn fx:id="colContact" text="Contact Info" prefWidth="180"/>
                     <TableColumn fx:id="colAssignedCategory" text="Assigned Category" prefWidth="180"/>
                 </columns>
             </TableView>
+
         </VBox>
     </children>
 </AnchorPane>
