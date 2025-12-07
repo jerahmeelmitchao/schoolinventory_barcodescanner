@@ -24,9 +24,9 @@ public class Dashboard2Controller {
     private void loadDashboard() {
         try (Connection conn = DatabaseConnection.getConnection()) {
             loadCounts(conn);
-            loadCategoryChart(conn, 0, 0);   // row 0, col 0
-            loadMostScannedChart(conn, 0, 1); // row 0, col 1
-            loadMonthlyAddedChart(conn, 1, 0, 2); // row 1, col 0, span 2 columns
+            loadCategoryChart(conn, 0, 0);
+            loadMostScannedChart(conn, 0, 1);
+            loadMonthlyAddedChart(conn, 1, 0, 2);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -39,17 +39,18 @@ public class Dashboard2Controller {
             JOIN categories c ON i.category_id = c.category_id
             GROUP BY c.category_name
             """;
+
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
+
             while (rs.next()) {
                 series.getData().add(new XYChart.Data<>(rs.getString("category_name"), rs.getInt("total")));
             }
         }
 
-        CategoryAxis xAxis = new CategoryAxis();
-        NumberAxis yAxis = new NumberAxis();
-        BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
+        BarChart<String, Number> barChart =
+                new BarChart<>(new CategoryAxis(), new NumberAxis());
         barChart.setTitle("Items per Category");
         barChart.getData().add(series);
         barChart.setPrefSize(500, 300);
@@ -67,17 +68,18 @@ public class Dashboard2Controller {
             ORDER BY scans DESC
             LIMIT 5
             """;
+
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
+
             while (rs.next()) {
                 series.getData().add(new XYChart.Data<>(rs.getString("item_name"), rs.getInt("scans")));
             }
         }
 
-        CategoryAxis xAxis = new CategoryAxis();
-        NumberAxis yAxis = new NumberAxis();
-        BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
+        BarChart<String, Number> barChart =
+                new BarChart<>(new CategoryAxis(), new NumberAxis());
         barChart.setTitle("Top 5 Most Scanned Items (This Month)");
         barChart.getData().add(series);
         barChart.setPrefSize(500, 300);
@@ -92,18 +94,19 @@ public class Dashboard2Controller {
             WHERE date_acquired IS NOT NULL
             GROUP BY MONTH(date_acquired)
             """;
+
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
+
             while (rs.next()) {
                 int m = rs.getInt("month_num");
                 series.getData().add(new XYChart.Data<>(Month.of(m).name(), rs.getInt("total")));
             }
         }
 
-        CategoryAxis xAxis = new CategoryAxis();
-        NumberAxis yAxis = new NumberAxis();
-        LineChart<String, Number> lineChart = new LineChart<>(xAxis, yAxis);
+        LineChart<String, Number> lineChart =
+                new LineChart<>(new CategoryAxis(), new NumberAxis());
         lineChart.setTitle("Items Added per Month");
         lineChart.getData().add(series);
         lineChart.setPrefSize(1020, 300);
@@ -112,15 +115,29 @@ public class Dashboard2Controller {
     }
 
     private void loadCounts(Connection conn) throws SQLException {
-        lblTotalItems.setText(String.valueOf(count(conn, "SELECT COUNT(*) FROM items")));
-        lblLowStock.setText(String.valueOf(count(conn, "SELECT COUNT(*) FROM items WHERE quantity < 5")));
-        lblDamaged.setText(String.valueOf(count(conn, "SELECT COUNT(*) FROM items WHERE condition_status IN ('Damaged','Disposed')")));
-        lblUnscanned.setText(String.valueOf(count(conn, "SELECT COUNT(*) FROM items WHERE last_scanned IS NULL OR last_scanned < DATE_SUB(CURDATE(), INTERVAL 90 DAY)")));
+
+        // Count all items
+        lblTotalItems.setText(String.valueOf(count(conn,
+                "SELECT COUNT(*) FROM items")));
+
+        // Low stock no longer applies → You removed quantity.
+        // Use Missing or Borrowed as "problem items"
+        lblLowStock.setText(String.valueOf(count(conn,
+                "SELECT COUNT(*) FROM items WHERE status IN ('Missing','Borrowed')")));
+
+        // Damaged or Disposed → Using new status field
+        lblDamaged.setText(String.valueOf(count(conn,
+                "SELECT COUNT(*) FROM items WHERE status IN ('Damaged','Disposed')")));
+
+        // Unscanned logic remains the same
+        lblUnscanned.setText(String.valueOf(count(conn,
+                "SELECT COUNT(*) FROM items WHERE last_scanned IS NULL OR last_scanned < DATE_SUB(CURDATE(), INTERVAL 90 DAY)")));
     }
 
     private int count(Connection conn, String sql) throws SQLException {
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
+
             if (rs.next()) {
                 return rs.getInt(1);
             }
