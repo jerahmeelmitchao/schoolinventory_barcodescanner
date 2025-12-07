@@ -1,98 +1,113 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane styleClass="mainFxmlClass" stylesheets="@../assets/styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="inventorysystem.controllers.ScannedItemsController">
+<AnchorPane xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="inventorysystem.controllers.ScannedItemsController"
+            styleClass="mainFxmlClass">
 
-    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" pannable="true" vbarPolicy="AS_NEEDED" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
-        <content>
-            <VBox fx:id="mainVBox" alignment="TOP_CENTER" prefWidth="1000" spacing="20">
-                <padding>
-                    <Insets bottom="20" left="20" right="20" top="20" />
-                </padding>
+    <ScrollPane fitToWidth="true" vbarPolicy="AS_NEEDED" hbarPolicy="NEVER"
+                AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0"
+                AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
+                style="-fx-background-color:transparent;">
 
-                <!-- Header -->
-                <Label style="-fx-font-size:22px; -fx-font-weight:bold; -fx-text-fill:#2c3e50;" text="📊 Scanned Items by Date Range" />
+        <!-- FIXED: Added fx:id="mainVBox" -->
+        <VBox fx:id="mainVBox" spacing="25" alignment="TOP_CENTER" prefWidth="1000">
+            <padding>
+                <Insets top="25" right="25" bottom="25" left="25"/>
+            </padding>
 
-                <!-- Filter controls -->
-                <HBox alignment="CENTER_LEFT" maxWidth="900" spacing="10">
-                    <Label style="-fx-font-weight:bold;" text="From:" />
-                    <DatePicker fx:id="startDatePicker" prefWidth="150" />
-                    <Label style="-fx-font-weight:bold;" text="To:" />
-                    <DatePicker fx:id="endDatePicker" prefWidth="150" />
-                    <Button onAction="#onFilterClicked" styleClass="primary-btn" text="🔍 Filter" />
-                </HBox>
+            <!-- Title -->
+            <Label text="📊 Scanned Items Report"
+                   style="-fx-font-size:26px; -fx-font-weight:800; -fx-text-fill:#1a1a1a;" />
 
-                <!-- Table container -->
-                <VBox maxWidth="900" spacing="10" style="-fx-background-color:white; -fx-padding:10; -fx-border-color:#dcdcdc; -fx-border-radius:8;" VBox.vgrow="ALWAYS">
-                    <TableView fx:id="tableScannedItems" prefHeight="450" VBox.vgrow="ALWAYS">
-                        <columns>
-                            <TableColumn fx:id="colItemName" prefWidth="450" text="Item Name" />
-                            <TableColumn fx:id="colScanDate" prefWidth="300" text="Scan Date" />
-                        </columns>
-                    </TableView>
+            <!-- Filter Card -->
+            <HBox spacing="15" alignment="CENTER_LEFT"
+                  style="-fx-background-color:white; -fx-background-radius:12; -fx-padding:20; -fx-effect:dropshadow(three-pass-box, rgba(0,0,0,0.07), 12, 0, 0, 3);"
+                  maxWidth="850">
 
-                    <TitledPane expanded="false" maxWidth="900" text="Item Details">
-                        <content>
-                            <GridPane hgap="10" vgap="5">
-                                <padding>
-                                    <Insets bottom="10" left="10" right="10" top="10" />
-                                </padding>
-                                <columnConstraints>
-                                    <ColumnConstraints halignment="RIGHT" minWidth="120" />
-                                    <ColumnConstraints halignment="LEFT" minWidth="300" />
-                                </columnConstraints>
+                <Label text="From:" styleClass="strong-label"/>
+                <DatePicker fx:id="startDatePicker" prefWidth="150"/>
 
-                                <Label text="Item Name:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                <Label fx:id="lblName" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <Label text="To:" styleClass="strong-label"/>
+                <DatePicker fx:id="endDatePicker" prefWidth="150"/>
 
-                                <Label text="Category:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                                <Label fx:id="lblCategory" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Button text="🔍 Apply Filter" styleClass="primary-btn" onAction="#onFilterClicked"/>
+            </HBox>
 
-                                <Label text="Quantity:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                                <Label fx:id="lblQuantity" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <!-- Table Card -->
+            <VBox spacing="15" maxWidth="900"
+                  style="-fx-background-color:white; -fx-background-radius:12;
+                         -fx-padding:20; -fx-effect:dropshadow(three-pass-box, rgba(0,0,0,0.06), 12, 0, 0, 3);">
 
-                                <Label text="Condition:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                                <Label fx:id="lblCondition" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <Label text="Scanned Items" 
+                       style="-fx-font-size:18px; -fx-font-weight:700; -fx-text-fill:#333;" />
 
-                                <Label text="Storage Location:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                                <Label fx:id="lblLocation" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <TableView fx:id="tableScannedItems" prefHeight="400" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colItemName" text="Item Name" prefWidth="450"/>
+                        <TableColumn fx:id="colScanDate" text="Scan Date" prefWidth="250"/>
+                    </columns>
+                </TableView>
 
-                                <Label text="Last Scanned:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-                                <Label fx:id="lblLastScan" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                        <rowConstraints>
-                           <RowConstraints />
-                           <RowConstraints />
-                           <RowConstraints />
-                           <RowConstraints />
-                           <RowConstraints />
-                           <RowConstraints />
-                        </rowConstraints>
-                            </GridPane>
-                        </content>
-                    </TitledPane>
-                </VBox>
+                <!-- Item Details Card -->
+                <TitledPane text="Item Details" expanded="false"
+                            style="-fx-background-radius:10; -fx-border-radius:10;">
+                    
+                    <content>
+                        <GridPane hgap="10" vgap="8">
+                            <padding>
+                                <Insets top="12" right="10" bottom="12" left="10"/>
+                            </padding>
 
-                <!-- Chart Section -->
-                <Label style="-fx-font-size:18px; -fx-font-weight:bold; -fx-text-fill:#2c3e50;" text="📈 Monthly Scanned vs Unscanned Items" />
-                <StackPane fx:id="chartContainer" maxWidth="900" prefHeight="400" style="-fx-background-color:white; -fx-border-color:#dcdcdc; -fx-border-radius:8;"> 
-                    <Label fx:id="chartPlaceholder" style="-fx-font-size:16px; -fx-text-fill: gray;" text="Loading monthly report..." /> 
-                </StackPane>
+                            <columnConstraints>
+                                <ColumnConstraints prefWidth="130" halignment="RIGHT"/>
+                                <ColumnConstraints prefWidth="350" halignment="LEFT"/>
+                            </columnConstraints>
+
+                            <Label text="Item Name:" GridPane.rowIndex="0"/>
+                            <Label fx:id="lblName" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                            <Label text="Category:" GridPane.rowIndex="1"/>
+                            <Label fx:id="lblCategory" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                            <Label text="Status:" GridPane.rowIndex="2"/>
+                            <Label fx:id="lblQuantity" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                            <Label text="Storage:" GridPane.rowIndex="3"/>
+                            <Label fx:id="lblLocation" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                            <Label text="Last Scanned:" GridPane.rowIndex="4"/>
+                            <Label fx:id="lblLastScan" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                        </GridPane>
+                    </content>
+
+                </TitledPane>
+
             </VBox>
-        </content>
+
+            <!-- Chart Section -->
+            <VBox spacing="15" maxWidth="900"
+                  style="-fx-background-color:white; -fx-background-radius:12;
+                         -fx-padding:20; -fx-effect:dropshadow(three-pass-box, rgba(0,0,0,0.07), 12, 0, 0, 3);">
+
+                <Label text="📈 Monthly Scanned vs Unscanned"
+                       style="-fx-font-size:20px; -fx-font-weight:700; -fx-text-fill:#2c3e50;" />
+
+                <StackPane fx:id="chartContainer" prefHeight="350"
+                           style="-fx-background-color:#fafafa; -fx-background-radius:10; -fx-border-radius:10;">
+                    <Label fx:id="chartPlaceholder" 
+                           text="Loading monthly data…"
+                           style="-fx-text-fill:#777; -fx-font-size:16px;"/>
+                </StackPane>
+
+            </VBox>
+
+        </VBox>
+
     </ScrollPane>
 </AnchorPane>
