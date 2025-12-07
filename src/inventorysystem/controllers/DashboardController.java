@@ -42,7 +42,7 @@ public class DashboardController {
         buttonFxmlMap.put(borrowersBtn, "BorrowerManagement.fxml");
         buttonFxmlMap.put(inchargesBtn, "InCharge.fxml");
         buttonFxmlMap.put(scannedItemsBtn, "scanned_items.fxml"); //
-        buttonFxmlMap.put(ReportsBtn, "reports.fxml");
+//        buttonFxmlMap.put(ReportsBtn, "reports.fxml");
 
 
         // Add click events
