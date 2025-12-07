@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
- */
 package inventorysystem.controllers;
 
 import inventorysystem.dao.UserDAO;
@@ -24,6 +20,16 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.animation.FadeTransition;
+import javafx.animation.TranslateTransition;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
 
 /**
  * FXML Controller class
@@ -40,6 +46,8 @@ public class LoginController implements Initializable {
     private TextField loginUsername;
     @FXML
     private Text signInBtn;
+    @FXML
+    private AnchorPane rootPane;
 
     /**
      * Initializes the controller class.
@@ -104,16 +112,35 @@ public class LoginController implements Initializable {
     private void switchToSignUp(MouseEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/inventorysystem/views/signup.fxml"));
-            Parent root = loader.load();
+            Parent nextRoot = loader.load();
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root, 700, 500);
-            scene.getStylesheets().add(getClass().getResource("/inventorysystem/assets/styles.css").toExternalForm());
 
-            stage.setScene(scene);
-            stage.centerOnScreen();
+            StackPane wrapper = new StackPane(nextRoot);
+            Scene newScene = new Scene(wrapper, 800, 500);
+            newScene.getStylesheets().add(getClass().getResource("/inventorysystem/assets/styles.css").toExternalForm());
 
-        } catch (IOException e) {
+            Parent currentRoot = ((Node) event.getSource()).getScene().getRoot();
+
+            // FADE OUT
+            FadeTransition fadeOut = new FadeTransition(Duration.millis(250), currentRoot);
+            fadeOut.setFromValue(1);
+            fadeOut.setToValue(0);
+
+            // FADE IN
+            FadeTransition fadeIn = new FadeTransition(Duration.millis(250), nextRoot);
+            fadeIn.setFromValue(0);
+            fadeIn.setToValue(1);
+
+            fadeOut.setOnFinished(e -> {
+                stage.setScene(newScene);
+                stage.centerOnScreen();
+                fadeIn.play();
+            });
+
+            fadeOut.play();
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

@@ -15,8 +15,6 @@ import javafx.scene.layout.VBox;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
-import java.time.LocalDateTime;
 
 import javafx.scene.layout.StackPane;
 
@@ -134,12 +132,16 @@ public class ScannedItemsController {
 
     private void showItemDetails(String itemName) {
         String sql = """
-            SELECT i.item_name, c.category_name, i.quantity,
-                   i.condition_status, i.storage_location, i.last_scanned
-            FROM items i
-            LEFT JOIN categories c ON i.category_id = c.category_id
-            WHERE i.item_name = ?
-            """;
+        SELECT 
+            i.item_name,
+            c.category_name,
+            i.status,
+            i.storage_location,
+            i.last_scanned
+        FROM items i
+        LEFT JOIN categories c ON i.category_id = c.category_id
+        WHERE i.item_name = ?
+        """;
 
         try (Connection conn = DatabaseConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -147,22 +149,24 @@ public class ScannedItemsController {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                lblName.setText("Item Name: " + rs.getString("item_name"));
-                lblCategory.setText("Category: " + rs.getString("category_name"));
-                lblQuantity.setText("Quantity: " + rs.getInt("quantity"));
-                lblCondition.setText("Condition: " + rs.getString("condition_status"));
-                lblLocation.setText("Storage Location: " + rs.getString("storage_location"));
+
+                lblName.setText(rs.getString("item_name"));
+                lblCategory.setText(rs.getString("category_name"));
+                lblQuantity.setText(rs.getString("status")); // now shows status
+                lblCondition.setText(""); // optional—remove from UI later
+                lblLocation.setText(rs.getString("storage_location"));
+
                 String lastScannedRaw = rs.getString("last_scanned");
-                String formattedLastScanned = "—";
+                String formatted = "—";
                 if (lastScannedRaw != null) {
                     try {
-                        LocalDate date = LocalDate.parse(lastScannedRaw.split(" ")[0]);
-                        formattedLastScanned = date.format(displayFormatter);
-                    } catch (Exception e) {
-                        formattedLastScanned = lastScannedRaw;
+                        formatted = LocalDate.parse(lastScannedRaw.split(" ")[0])
+                                .format(displayFormatter);
+                    } catch (Exception ignore) {
+                        formatted = lastScannedRaw;
                     }
                 }
-                lblLastScan.setText(formattedLastScanned);
+                lblLastScan.setText(formatted);
             }
 
         } catch (SQLException e) {

@@ -17,6 +17,8 @@ public class Main extends Application {
 
 //            FXMLLoader loader = new FXMLLoader(getClass().getResource("/inventorysystem/views/login.fxml"));
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/inventorysystem/views/login.fxml"));
+            //FXMLLoader loader = new FXMLLoader(getClass().getResource("/inventorysystem/views/login.fxml"));
+            //FXMLLoader loader = new FXMLLoader(getClass().getResource("/inventorysystem/views/login.fxml"));
             Parent root = loader.load();
             // Create scene with fixed size
             
@@ -24,8 +26,9 @@ public class Main extends Application {
 //            Scene scene = new Scene(root, 1200, 750);
             
             // Scene size for login 
-//            Scene scene = new Scene(root, 700, 500);
+//          Scene scene = new Scene(root, 700, 500);
             Scene scene = new Scene(root, 700, 500);
+            //Scene scene = new Scene(root, 800, 500);
             scene.getStylesheets().add(getClass().getResource("/inventorysystem/assets/styles.css").toExternalForm());
 
             // Stage setup
@@ -40,7 +43,6 @@ public class Main extends Application {
             primaryStage.setResizable(false);
 
             primaryStage.show();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
