@@ -56,6 +56,11 @@
                     <Cursor fx:constant="HAND" />
                 </cursor>
             </Button>
+            <Button fx:id="ReportsBtn" text="Reports" prefWidth="160" styleClass="sidebar-btn">
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
+            </Button>
         </VBox>
     </left>
     <!-- Main Content -->

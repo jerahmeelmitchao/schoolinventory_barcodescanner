@@ -30,6 +30,8 @@ public class DashboardController {
     private Map<Button, String> buttonFxmlMap;
     @FXML
     private Button scannedItemsBtn;
+    @FXML
+    private Button ReportsBtn;
 
     public void initialize() {
         // Map buttons to FXML files (ensure these files exist in views/)
@@ -39,7 +41,9 @@ public class DashboardController {
         buttonFxmlMap.put(categoriesBtn, "category.fxml");
         buttonFxmlMap.put(borrowersBtn, "BorrowerManagement.fxml");
         buttonFxmlMap.put(inchargesBtn, "InCharge.fxml");
-        buttonFxmlMap.put(scannedItemsBtn, "scanned_items.fxml"); // 🔹 Rosete’s screen
+        buttonFxmlMap.put(scannedItemsBtn, "scanned_items.fxml"); //
+        buttonFxmlMap.put(ReportsBtn, "reports.fxml");
+
 
         // Add click events
         buttonFxmlMap.keySet().forEach(btn -> btn.setOnAction(e -> loadView(btn)));
