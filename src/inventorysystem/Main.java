@@ -15,7 +15,7 @@ public class Main extends Application {
             // Load the FXML file
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/inventorysystem/views/dashboard.fxml"));
 
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/inventorysystem/views/login.fxml"));
+            //FXMLLoader loader = new FXMLLoader(getClass().getResource("/inventorysystem/views/login.fxml"));
             //FXMLLoader loader = new FXMLLoader(getClass().getResource("/inventorysystem/views/login.fxml"));
             Parent root = loader.load();
             // Create scene with fixed size
