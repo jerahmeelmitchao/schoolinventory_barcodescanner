@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox spacing="12" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="inventorysystem.controllers.ReportsController">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Export Reports" >
+        <font>
+            <Font size="20"/>
+        </font>
+    </Label>
+
+    <Button fx:id="exportAllBtn" text="Export — All Items (CSV)" onAction="#exportAllItems" />
+    <Button fx:id="exportBorrowedBtn" text="Export — Borrowed Items (CSV)" onAction="#exportBorrowedItems" />
+    <Button fx:id="exportMissingBtn" text="Export — Missing Items (CSV)" onAction="#exportMissingItems" />
+    <Button fx:id="exportDamagedBtn" text="Export — Damaged Items (CSV)" onAction="#exportDamagedItems" />
+    <Button fx:id="exportBorrowersBtn" text="Export — Borrowers (CSV)" onAction="#exportBorrowers" />
+</VBox>

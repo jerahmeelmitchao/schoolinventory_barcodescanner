@@ -46,7 +46,17 @@ public class LoginController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        // Press ENTER in password field → login
+        loginPassword.setOnAction(e -> login(new ActionEvent(loginBtn, null)));
+
+        // Press ENTER in username field → focus password OR login if password filled
+        loginUsername.setOnAction(e -> {
+            if (!loginPassword.getText().isEmpty()) {
+                login(new ActionEvent(loginBtn, null));
+            } else {
+                loginPassword.requestFocus();
+            }
+        });
     }
 
     @FXML
