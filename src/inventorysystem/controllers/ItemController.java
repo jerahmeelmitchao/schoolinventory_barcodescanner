@@ -3,6 +3,7 @@ package inventorysystem.controllers;
 import inventorysystem.dao.CategoryDAO;
 import inventorysystem.dao.ItemDAO;
 import inventorysystem.models.Item;
+import java.io.File;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,10 +17,14 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import javafx.stage.FileChooser;
 
 public class ItemController {
 
@@ -257,13 +262,220 @@ public class ItemController {
 
     @FXML
     private void handleExport() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Export");
-        alert.setHeaderText("Exporting Items");
-        alert.setContentText("Export functionality coming soon!");
-        alert.showAndWait();
 
-        // TODO: Add Excel / CSV export code here
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Export Reports");
+        dialog.setHeaderText("Choose what to export:");
+
+        ButtonType allBtn = new ButtonType("All Items");
+        ButtonType borrowedBtn = new ButtonType("Borrowed Items");
+        ButtonType missingBtn = new ButtonType("Missing Items");
+        ButtonType damagedBtn = new ButtonType("Damaged Items");
+        ButtonType borrowersBtn = new ButtonType("Borrowers");
+        ButtonType cancelBtn = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        dialog.getDialogPane().getButtonTypes().addAll(
+                allBtn, borrowedBtn, missingBtn, damagedBtn, borrowersBtn, cancelBtn
+        );
+
+        dialog.showAndWait().ifPresent(type -> {
+            if (type == allBtn) {
+                exportAllItems();
+            } else if (type == borrowedBtn) {
+                exportBorrowedItems();
+            } else if (type == missingBtn) {
+                exportMissingItems();
+            } else if (type == damagedBtn) {
+                exportDamagedItems();
+            } else if (type == borrowersBtn) {
+                exportBorrowers();
+            }
+        });
+    }
+
+    // ============================
+// CSV Helper Methods
+// ============================
+    private File chooseSaveFile(String suggestedName) {
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Save CSV");
+        fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Files", "*.csv"));
+        fc.setInitialFileName(suggestedName);
+        return fc.showSaveDialog(exportButton.getScene().getWindow());
+    }
+
+    private void writeCsv(File file, List<String> lines) throws Exception {
+        try (PrintWriter pw = new PrintWriter(file)) {
+            for (String line : lines) {
+                pw.println(line);
+            }
+        }
+    }
+
+    private String csvSafe(String s) {
+        return s == null ? "" : s.replace(",", " ").replace("\n", " ");
+    }
+
+    private void exportAllItems() {
+        File file = chooseSaveFile("all_items.csv");
+        if (file == null) {
+            return;
+        }
+
+        try {
+            List<String> lines = new ArrayList<>();
+            lines.add("Item ID,Item Name,Barcode,Category,Unit,Status,Date Acquired,Last Scanned,Storage Location,In-Charge,Added By");
+
+            for (Item it : masterData) {
+                lines.add(String.join(",",
+                        csvSafe("" + it.getItemId()),
+                        csvSafe(it.getItemName()),
+                        csvSafe(it.getBarcode()),
+                        csvSafe(it.getCategoryName()),
+                        csvSafe(it.getUnit()),
+                        csvSafe(it.getStatus()),
+                        csvSafe(it.getDateAcquired() != null ? it.getDateAcquired().toString() : ""),
+                        csvSafe(it.getLastScanned() != null ? it.getLastScanned().toString() : ""),
+                        csvSafe(it.getStorageLocation()),
+                        csvSafe(it.getInChargeName()),
+                        csvSafe(it.getAddedBy())
+                ));
+            }
+
+            writeCsv(file, lines);
+            showAlert("Success", "Export Complete", "All Items exported.");
+
+        } catch (Exception e) {
+            showAlert("Error", "Export Failed", e.getMessage());
+        }
+    }
+
+    private void exportMissingItems() {
+        File file = chooseSaveFile("missing_items.csv");
+        if (file == null) {
+            return;
+        }
+
+        try {
+            List<String> lines = new ArrayList<>();
+            lines.add("Item ID,Item Name,Barcode,Category,Last Scanned,Location,In-Charge");
+
+            for (Item it : masterData) {
+                if ("Missing".equalsIgnoreCase(it.getStatus())) {
+                    lines.add(String.join(",",
+                            csvSafe("" + it.getItemId()),
+                            csvSafe(it.getItemName()),
+                            csvSafe(it.getBarcode()),
+                            csvSafe(it.getCategoryName()),
+                            csvSafe(it.getLastScanned() != null ? it.getLastScanned().toString() : ""),
+                            csvSafe(it.getStorageLocation()),
+                            csvSafe(it.getInChargeName())
+                    ));
+                }
+            }
+
+            writeCsv(file, lines);
+            showAlert("Success", "Export Complete", "Missing Items exported.");
+
+        } catch (Exception e) {
+            showAlert("Error", "Export Failed", e.getMessage());
+        }
+    }
+
+    private void exportDamagedItems() {
+        File file = chooseSaveFile("damaged_items.csv");
+        if (file == null) {
+            return;
+        }
+
+        try {
+            List<String> lines = new ArrayList<>();
+            lines.add("Item ID,Item Name,Barcode,Category,Date Acquired,Location,In-Charge");
+
+            for (Item it : masterData) {
+                if ("Damaged".equalsIgnoreCase(it.getStatus())) {
+                    lines.add(String.join(",",
+                            csvSafe("" + it.getItemId()),
+                            csvSafe(it.getItemName()),
+                            csvSafe(it.getBarcode()),
+                            csvSafe(it.getCategoryName()),
+                            csvSafe(it.getDateAcquired() != null ? it.getDateAcquired().toString() : ""),
+                            csvSafe(it.getStorageLocation()),
+                            csvSafe(it.getInChargeName())
+                    ));
+                }
+            }
+
+            writeCsv(file, lines);
+            showAlert("Success", "Export Complete", "Damaged Items exported.");
+
+        } catch (Exception e) {
+            showAlert("Error", "Export Failed", e.getMessage());
+        }
+    }
+
+    private void exportBorrowedItems() {
+        File file = chooseSaveFile("borrowed_items.csv");
+        if (file == null) {
+            return;
+        }
+
+        try {
+            List<String> lines = new ArrayList<>();
+            lines.add("Item ID,Item Name,Barcode,Category,Location,In-Charge");
+
+            for (Item it : masterData) {
+                if ("Borrowed".equalsIgnoreCase(it.getStatus())) {
+                    lines.add(String.join(",",
+                            csvSafe("" + it.getItemId()),
+                            csvSafe(it.getItemName()),
+                            csvSafe(it.getBarcode()),
+                            csvSafe(it.getCategoryName()),
+                            csvSafe(it.getStorageLocation()),
+                            csvSafe(it.getInChargeName())
+                    ));
+                }
+            }
+
+            writeCsv(file, lines);
+            showAlert("Success", "Export Complete", "Borrowed Items exported.");
+
+        } catch (Exception e) {
+            showAlert("Error", "Export Failed", e.getMessage());
+        }
+    }
+
+    private void exportBorrowers() {
+        File file = chooseSaveFile("borrowers_report.csv");
+        if (file == null) {
+            return;
+        }
+
+        try {
+            Class<?> daoClass = Class.forName("inventorysystem.dao.BorrowerDAO");
+            Object dao = daoClass.getDeclaredConstructor().newInstance();
+            List<?> list = (List<?>) daoClass.getMethod("getAllBorrowers").invoke(dao);
+
+            List<String> lines = new ArrayList<>();
+            lines.add("Borrower ID,Borrower Name,Position,Borrower Type");
+
+            for (Object b : list) {
+                lines.add(String.join(",",
+                        csvSafe("" + b.getClass().getMethod("getBorrowerId").invoke(b)),
+                        csvSafe("" + b.getClass().getMethod("getBorrowerName").invoke(b)),
+                        csvSafe("" + b.getClass().getMethod("getPosition").invoke(b)),
+                        csvSafe("" + b.getClass().getMethod("getBorrowerType").invoke(b))
+                ));
+            }
+
+            writeCsv(file, lines);
+            showAlert("Success", "Export Complete", "Borrowers exported.");
+
+        } catch (ClassNotFoundException e) {
+            showAlert("Unavailable", "BorrowerDAO missing", "Cannot export borrower data.");
+        } catch (Exception e) {
+            showAlert("Error", "Export Failed", e.getMessage());
+        }
     }
 
 }
